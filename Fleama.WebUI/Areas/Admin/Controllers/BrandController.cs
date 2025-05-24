@@ -6,67 +6,66 @@ using Microsoft.EntityFrameworkCore;
 namespace Fleama.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class AppUserController : Controller
+    public class BrandController : Controller
     {
-
         private readonly DatabaseContext _context;
 
-        public AppUserController(DatabaseContext context)
+        public BrandController(DatabaseContext context)
         {
             _context = context;
         }
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.AppUsers.ToListAsync());
+            return View(await _context.Brands.ToListAsync());
         }
-        
+
         public async Task<IActionResult> GetAll()
         {
-            var users = await _context.Set<AppUser>().ToListAsync();
-            return Ok(users);
+            var brands = await _context.Set<Brand>().ToListAsync();
+            return Ok(brands);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var user = await _context.Set<AppUser>().FindAsync(id);
-            if (user == null)
+            var brand = await _context.Set<Brand>().FindAsync(id);
+            if (brand == null)
                 return NotFound();
 
-            return Ok(user);
+            return Ok(brand);
         }
-
 
         public async Task<IActionResult> Detail(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var user = await _context.AppUsers.FirstOrDefaultAsync(x => x.Id == id);
-            if (user == null)
+            var brand = await _context.Brands.FirstOrDefaultAsync(x => x.Id == id);
+            if (brand == null)
                 return NotFound();
 
-            return View(user);
+            return View(brand);
         }
-        public IActionResult Create() 
+
+        public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(AppUser user)
+        public async Task<IActionResult> Create(Brand brand)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                _context.AppUsers.Add(user);
+                _context.Brands.Add(brand);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(user);
+            return View(brand);
         }
-        
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,36 +73,35 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var user = await _context.AppUsers.FindAsync(id);
-            if(user == null)
+            var brand = await _context.Brands.FindAsync(id);
+            if (brand == null)
             {
                 return NotFound();
             }
-            return View(user);
+            return View(brand);
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, AppUser user)
+        public async Task<IActionResult> Edit(int id, Brand brand)
         {
-            if (id != user.Id)
+            if (id != brand.Id)
                 return NotFound();
 
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(user);
+                    _context.Update(brand);
                     await _context.SaveChangesAsync();
                 }
-                catch(DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException)
                 {
                     throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
-        }        
+            return View(brand);
+        }
 
         public async Task<IActionResult> Delete(int? id)
         {
@@ -112,25 +110,26 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var user = await _context.AppUsers.FirstOrDefaultAsync(x => x.Id == id);
-            if (user == null)
+            var brand = await _context.Brands.FirstOrDefaultAsync(x => x.Id == id);
+            if (brand == null)
             {
                 return NotFound();
             }
-            return View(user);
+            return View(brand);
         }
 
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirm(int id)
         {
-            var user = await _context.AppUsers.FindAsync(id);
-            if (user != null)
+            var brand = await _context.Brands.FindAsync(id);
+            if (brand != null)
             {
-                _context.AppUsers.Remove(user);
-            }            
+                _context.Brands.Remove(brand);
+            }
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
+        
     }
 }

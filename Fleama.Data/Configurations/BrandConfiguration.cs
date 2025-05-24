@@ -4,15 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Fleama.Data.Configurations
 {
-    internal class CategoryConfiguration : IEntityTypeConfiguration<Category>
+    internal class BrandConfiguration : IEntityTypeConfiguration<Brand>
     {
-        public void Configure(EntityTypeBuilder<Category> builder)
+        public void Configure(EntityTypeBuilder<Brand> builder)
         {
             builder.Property(x => x.Name)
                    .IsRequired()
-                   .HasMaxLength(50);
-
-            builder.Property(x => x.Image)
                    .HasMaxLength(50);
         }
     }
