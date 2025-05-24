@@ -8,9 +8,15 @@ namespace Fleama.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
-            builder.Property(x => x.Name).IsRequired().HasMaxLength(150);
-            builder.Property(x => x.Image).HasMaxLength(100);
-            builder.Property(x => x.ProductCode).HasMaxLength(50);
+            builder.Property(x => x.Name)
+                   .IsRequired()
+                   .HasMaxLength(150);
+
+            builder.Property(x => x.Image)
+                   .HasMaxLength(100);
+
+            builder.Property(x => x.ProductCode)
+                   .HasMaxLength(50);
         }
     }
 }
