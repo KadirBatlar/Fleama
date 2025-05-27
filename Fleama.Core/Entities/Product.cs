@@ -25,6 +25,12 @@ namespace Fleama.Core.Entities
         [Display(Name = "Kategori")]
         public Category? Category { get; set; }
 
+        [Display(Name = "Marka ID")]
+        public int BrandId { get; set; }
+
+        [Display(Name = "Marka")]
+        public Brand? Brand { get; set; }
+
         [Display(Name = "Sıra Numarası")]
         public int OrderNo { get; set; }
     }
