@@ -17,7 +17,7 @@ namespace Fleama.Core.Entities
         public bool IsTopMenu { get; set; }
 
         [Display(Name = "Üst Kategori ID")]
-        public int ParentId { get; set; }
+        public int ParentId { get; set; } = 0;
 
         [Display(Name = "Sıra Numarası")]
         public int OrderNo { get; set; }
