@@ -12587,13 +12587,7 @@ body {
             flex-wrap: nowrap;
         }
 
-            .sb-sidenav .sb-sidenav-menu .nav .sb-sidenav-menu-heading {
-                padding: 1.75rem 1rem 0.75rem;
-                font-size: 0.75rem;
-                font-weight: bold;
-                text-transform: uppercase;
-            }
-
+            
             .sb-sidenav .sb-sidenav-menu .nav .nav-link {
                 display: flex;
                 align-items: center;
@@ -12669,7 +12663,7 @@ body {
 }
 
     .sb-sidenav-light .sb-sidenav-menu .sb-sidenav-menu-heading {
-        color: #adb5bd;
+        color: #d63384;
     }
 
     .sb-sidenav-light .sb-sidenav-menu .nav-link {
@@ -13173,7 +13167,7 @@ h1, h2, h3 {
         }
 
     .sb-sidenav-custom .sb-sidenav-menu-heading {
-        color: #b30c5e;
+        color: #d63384;
         padding: 1rem 1.5rem 0.5rem;
         font-size: 0.85rem;
         text-transform: uppercase;
@@ -13191,7 +13185,7 @@ h1, h2, h3 {
 
     /* Sidebar başlık yazısı */
     .sb-sidenav-custom .sb-sidenav-menu-heading {
-        color: #ffffff;
+        color: #d63384;
         font-weight: bold;
     }
 
@@ -13217,4 +13211,78 @@ h1, h2, h3 {
     background-color: #f8cdda !important;
     color: #ffffff !important;
     border-top: 1px solid #f3b1ce;
+}
+
+/* Soft pink sidebar background */
+.sb-sidenav-pink {
+    background-color: #f472b6 !important; /* Soft pink tone */
+}
+
+/* Sidebar footer (darker pink) */
+.bg-pink-dark {
+    background-color: #ec4899 !important;
+}
+
+/* Make all icons white inside the sidebar */
+.sb-sidenav .sb-nav-link-icon i {
+    color: white !important;
+}
+
+/* Optional: Sidebar hover effect */
+.sb-sidenav .nav-link:hover {
+    background-color: #fb92c8 !important;
+    color: white !important;
+}
+.sb-sidenav .sb-nav-link-icon i {
+    color: #e91e63 !important; /* Canlı pembe */
+}
+.sb-sidenav .sb-sidenav-menu-heading {
+    background-color: #f8d1dc !important; /* Soft pembe */
+    color: #d63384 !important;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+}
+.sb-sidenav-footer {
+    background-color: #f8d1dc !important; /* Soft pembe */
+    color: #e91e63 !important;
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+}
+/* Sidebar genel yazı rengi */
+.sb-sidenav.sb-sidenav-custom {
+    background-color: #f8cdd3 !important; /* Soft pembe */
+    color: #e91e63 !important;
+}
+
+/* Menü başlığı */
+.sb-sidenav-menu-heading {
+    color: #d63384 !important;
+}
+
+/* Sidebar bağlantı yazıları */
+.sb-sidenav .nav-link {
+    color: #e91e63 !important;
+}
+
+    /* Hover durumunda bağlantı yazısı */
+    .sb-sidenav .nav-link:hover {
+        background-color: #f48fb1 !important;
+        color: #e91e63 !important;
+    }
+
+/* Sidebar ikonları */
+.sb-sidenav .sb-nav-link-icon i {
+    color: #e91e63 !important;
+}
+
+/* Footer alanı */
+.sb-sidenav-footer {
+    background-color: #f8cdd3 !important;
+    color: #e91e63 !important;
+}
+
+/* Sidebar başlığı - Yönetim Paneli */
+.sb-sidenav-menu-heading {
+    color: #d63384 !important; /* Pembe ton */
+    font-weight: 600;
 }
