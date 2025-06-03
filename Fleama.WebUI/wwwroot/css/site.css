@@ -1,18 +1,101 @@
-html {
-  font-size: 14px;
+﻿/* GENEL YAPI */
+body {
+    background-color: #ffffff;
+    color: #000000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+/* BAŞLIKLAR */
+.page-title, h1, h2, h3, h4, h5 {
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 1rem;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+/* TABLOLAR */
+.table th {
+    background-color: #f7f7f7;
+    color: #333;
+    font-weight: 500;
+    border-bottom: 2px solid #e0e0e0;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+.table td {
+    vertical-align: middle;
+}
+
+/* YAZILAR - LINKLER */
+a,
+.nav-link,
+.btn,
+.btn-link {
+    color: #000 !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+    a:hover,
+    .nav-link:hover,
+    .btn-link:hover {
+        color: #f990bb !important;
+    }
+
+/* BADGE (EVET / HAYIR) */
+.bg-soft-pink {
+    background-color: #fbb6ce !important;
+    color: #ffffff !important;
+}
+
+.badge {
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5em 0.75em;
+    border-radius: 0.5rem;
+}
+
+/* BUTONLAR GENEL */
+.btn {
+    font-weight: 500;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+/* BUTON - OUTLINE PRIMARY */
+.btn-outline-primary {
+    border-color: #fbb6ce;
+    color: #fbb6ce;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #fbb6ce;
+        color: white;
+    }
+
+/* BUTON - PRIMARY */
+.btn-primary {
+    background-color: #fbb6ce;
+    border-color: #fbb6ce;
+    color: white;
+}
+
+    .btn-primary:hover {
+        background-color: #f990bb;
+        border-color: #f990bb;
+    }
+
+/* BUTON - DANGER */
+.btn-danger {
+    background-color: #f66c7b;
+    border-color: #f66c7b;
+    color: white;
+}
+
+    .btn-danger:hover {
+        background-color: #d94c5c;
+        border-color: #d94c5c;
+    }
+
+/* TABLE HOVER ROW */
+.table-hover tbody tr:hover {
+    background-color: #fff1f5;
 }
