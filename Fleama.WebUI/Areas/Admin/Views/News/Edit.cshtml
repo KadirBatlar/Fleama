@@ -1,0 +1,64 @@
+﻿@model Fleama.Core.Entities.News
+
+@{
+    ViewData["Title"] = "Haber Düzenle";
+    Layout = "_LayoutAdmin";
+}
+
+<h2><i class="fas fa-edit me-2"></i> Haber / Duyuru Düzenle</h2>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+        <form asp-action="Edit" enctype="multipart/form-data" class="row g-3">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="col-md-6">
+                <label asp-for="Name" class="form-label">Başlık</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="Description" class="form-label">Açıklama</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label class="form-label">Mevcut Görsel</label><br />
+                @if (!string.IsNullOrEmpty(Model.Image))
+                {
+                    <img src="~/Img/News/@Model.Image" class="img-thumbnail mb-2" width="150" />
+                    <div class="form-check">
+                        <input type="checkbox" name="removeImg" class="form-check-input" id="removeImgCheck" />
+                        <label class="form-check-label" for="removeImgCheck">Mevcut görseli kaldır</label>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Yüklü görsel yok.</p>
+                }
+            </div>
+
+            <div class="col-md-12">
+                <label class="form-label">Yeni Görsel Yükle</label>
+                <input type="file" name="image" class="form-control" />
+            </div>
+
+            <div class="col-12 mt-3">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fas fa-save"></i> Kaydet
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">
+                    <i class="fas fa-arrow-left"></i> Geri Dön
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
