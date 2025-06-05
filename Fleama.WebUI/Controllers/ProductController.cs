@@ -14,9 +14,14 @@ namespace Fleama.WebUI.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search = "")
         {
-            var productContext = _context.Products.Where(p => p.IsActive && p.IsHome).Include(p => p.Brand).Include(p => p.Category);
+            var productContext = _context.Products
+                                 .Where(p => p.IsActive && p.IsHome &&
+                                     (p.Name.Contains(search) || p.Description.Contains(search)))
+                                 .Include(p => p.Brand)
+                                 .Include(p => p.Category);
+
             return View(await productContext.ToListAsync());
         }
 
