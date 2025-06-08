@@ -3,26 +3,35 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Fleama.WebUI</title>
+    <title>@ViewData["Title"] - Fleama</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Fleama.WebUI.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body style="background-color: #fff;">
+
     <partial name="_Header" />
-    <div class="container">
-        @Html.Raw(TempData["Message"])
-        <main role="main" class="pb-3">
+
+    <div class="container mt-4 mb-5">
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-info text-center">@Html.Raw(TempData["Message"])</div>
+        }
+
+        <main role="main">
             @RenderBody()
         </main>
     </div>
 
     <partial name="_Footer" />
-    
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-    
 </body>
 </html>

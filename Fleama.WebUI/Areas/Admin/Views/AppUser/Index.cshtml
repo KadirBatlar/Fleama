@@ -1,9 +1,7 @@
-﻿@model IEnumerable<AppUser>
-
+@model IEnumerable<AppUser>
 @{
     ViewData["Title"] = "Kullanıcılar";
     Layout = "_LayoutAdmin"; 
-}
 
 <h2><i class="fas fa-users me-2"></i> Kullanıcılar</h2>
 
@@ -51,6 +49,7 @@
                     </a>
                     <a class="btn btn-outline-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id">
                         <i class="fas fa-trash-alt"></i>
+
                     </a>
                 </td>
             </tr>

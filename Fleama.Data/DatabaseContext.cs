@@ -15,7 +15,7 @@ namespace Fleama.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=KADIR\SQLEXPRESS; Database=FleamaDb; Trusted_Connection=True; TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer(@"Server=localhost; Database=FleamaDb2; Trusted_Connection=True; TrustServerCertificate=True;");
             base.OnConfiguring(optionsBuilder);            
         }
 
