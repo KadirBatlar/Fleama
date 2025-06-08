@@ -1,26 +1,30 @@
 ﻿@model Brand
 
 @{
-	ViewData["Title"] = "Marka Ekle";
+    ViewData["Title"] = "Yeni Marka Ekle";
+    Layout = "_LayoutAdmin";
 }
 
-<hr />
-<div class="row">
-	<div class="col-md-4">
-		<form asp-action="Create">
-			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-			<div class="form-group">
-				<label asp-for="Name" class="control-label"></label>
-				<input asp-for="Name" class="form-control" />
-				<span asp-validation-for="Name" class="text-danger"></span>
-			</div>
-			<div class="form-group mt-2">
-				<input type="submit" value="Ekle" class="btn btn-primary" />
-			</div>
-		</form>
-	</div>
-</div>
+<h2><i class="fas fa-plus me-2"></i> Yeni Marka Ekle</h2>
 
-<div>
-	<a asp-action="Index">Listeye Dön</a>
+<div class="card shadow-sm border-pink rounded-3 p-4">
+    <form asp-action="Create" method="post">
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">Marka Adı</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-check form-switch mb-3">
+            <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+            <label class="form-check-label" asp-for="IsActive">Aktif</label>
+        </div>
+
+        <button type="submit" class="btn btn-outline-pink">
+            <i class="fas fa-check"></i> Kaydet
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary ms-2">
+            <i class="fas fa-arrow-left"></i> Geri
+        </a>
+    </form>
 </div>

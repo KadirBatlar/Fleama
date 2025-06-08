@@ -12564,11 +12564,11 @@ body {
     }
 
     .sb-topnav.navbar-dark #sidebarToggle {
-        color: rgba(255, 255, 255, 0.5);
+        color: #d63384 !important;
     }
 
     .sb-topnav.navbar-light #sidebarToggle {
-        color: #212529;
+        color: #d63384 !important;
     }
 
 .sb-sidenav {
@@ -13285,4 +13285,29 @@ h1, h2, h3 {
 .sb-sidenav-menu-heading {
     color: #d63384 !important; /* Pembe ton */
     font-weight: 600;
+}
+.btn-outline-pink {
+    border-color: #f8a1c4;
+    color: #d63384;
+}
+
+    .btn-outline-pink:hover {
+        background-color: #f8a1c4;
+        color: white;
+    }
+
+.table-light-pink {
+    background-color: #ffe0eb;
+}
+
+.badge.bg-success {
+    background-color: #28a745 !important;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.table th {
+    vertical-align: middle;
 }

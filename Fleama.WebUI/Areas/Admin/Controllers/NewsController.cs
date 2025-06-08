@@ -18,7 +18,8 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.News.ToListAsync());
+            var newsList = await _context.News.ToListAsync();
+            return View(newsList ?? new List<News>());
         }
 
         public async Task<IActionResult> GetAll()
@@ -48,6 +49,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
             return View(news);
         }
+
         public IActionResult Create()
         {
             return View();
@@ -72,18 +74,14 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var news = await _context.News.FindAsync(id);
             if (news == null)
-            {
                 return NotFound();
-            }
+
             return View(news);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Edit(int id, News news, IFormFile? image, bool removeImg = false)
@@ -116,15 +114,12 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var news = await _context.News.FirstOrDefaultAsync(x => x.Id == id);
             if (news == null)
-            {
                 return NotFound();
-            }
+
             return View(news);
         }
 
@@ -140,8 +135,8 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 }
 
                 _context.News.Remove(news);
+                await _context.SaveChangesAsync();
             }
-            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }

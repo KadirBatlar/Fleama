@@ -1,16 +1,15 @@
-﻿@model IEnumerable<AppUser>
+@model IEnumerable<AppUser>
 @{
     ViewData["Title"] = "Kullanıcılar";
-    Layout = "_LayoutAdmin";
-}
+    Layout = "_LayoutAdmin"; 
 
 <h2><i class="fas fa-users me-2"></i> Kullanıcılar</h2>
 
-<a asp-action="Create" class="btn btn-outline-primary mb-3">
+<a asp-action="Create" class="btn btn-outline-pink mb-3">
     <i class="fas fa-plus"></i> Yeni Ekle
 </a>
 
-<table class="table table-hover table-bordered text-center">
+<table class="table table-hover table-bordered text-center align-middle">
     <thead class="table-light">
         <tr>
             <th>Adı</th>
@@ -18,7 +17,7 @@
             <th>Kullanıcı Adı</th>
             <th>Email</th>
             <th>Telefon</th>
-            <th>Admin</th>
+            <th>Yönetici mi?</th>
             <th>İşlemler</th>
         </tr>
     </thead>
@@ -43,13 +42,14 @@
                 </td>
                 <td>
                     <a class="btn btn-outline-dark btn-sm me-1" asp-action="Edit" asp-route-id="@item.Id">
-                        <i class="fas fa-edit"></i> Düzenle
+                        <i class="fas fa-edit"></i>
                     </a>
                     <a class="btn btn-outline-dark btn-sm me-1" asp-action="Detail" asp-route-id="@item.Id">
-                        <i class="fas fa-eye"></i> Detaylar
+                        <i class="fas fa-eye"></i>
                     </a>
                     <a class="btn btn-outline-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id">
-                        <i class="fas fa-trash-alt"></i> Sil
+                        <i class="fas fa-trash-alt"></i>
+
                     </a>
                 </td>
             </tr>

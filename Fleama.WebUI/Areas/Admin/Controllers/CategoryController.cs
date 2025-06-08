@@ -2,7 +2,7 @@
 using Fleama.Data;
 using Fleama.WebUI.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering; //SelectList
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fleama.WebUI.Areas.Admin.Controllers
@@ -24,14 +24,14 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
         public async Task<IActionResult> GetAll()
         {
-            var categories = await _context.Set<Category>().ToListAsync();
+            var categories = await _context.Categories.ToListAsync();
             return Ok(categories);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var category = await _context.Set<Category>().FindAsync(id);
+            var category = await _context.Categories.FindAsync(id);
             if (category == null)
                 return NotFound();
 
@@ -47,6 +47,17 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (category == null)
                 return NotFound();
 
+            // Üst kategori adı gösterimi
+            if (category.ParentId != null)
+            {
+                var parent = await _context.Categories.FindAsync(category.ParentId);
+                ViewBag.ParentName = parent?.Name ?? "-";
+            }
+            else
+            {
+                ViewBag.ParentName = "-";
+            }
+
             return View(category);
         }
 
@@ -61,13 +72,14 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (image is not null)
+                if (image != null)
                     category.Image = await FileHelper.FileLoaderAsync(image, "/Img/Categories/");
 
                 await _context.Categories.AddAsync(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
             return View(category);
         }
@@ -75,19 +87,15 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var category = await _context.Categories.FindAsync(id);
             if (category == null)
-            {
                 return NotFound();
-            }
+
             ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
             return View(category);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Edit(int id, Category category, IFormFile? image, bool removeImg = false)
@@ -99,12 +107,20 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             {
                 try
                 {
-                    if(removeImg)
-                        category.Image = string.Empty;
-
-                    if (image is not null)                    
+                    if (image != null)
+                    {
                         category.Image = await FileHelper.FileLoaderAsync(image, "/Img/Categories/");
-                    
+                    }
+                    else if (removeImg)
+                    {
+                        category.Image = string.Empty;
+                    }
+                    else
+                    {
+                        // Görsel yüklenmedi, silme işaretlenmedi → mevcut görseli koru
+                        _context.Entry(category).Property(x => x.Image).IsModified = false;
+                    }
+
                     _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
@@ -112,8 +128,10 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 {
                     throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
             return View(category);
         }
@@ -121,15 +139,22 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
             if (category == null)
-            {
                 return NotFound();
+
+            if (category.ParentId != null)
+            {
+                var parent = await _context.Categories.FindAsync(category.ParentId);
+                ViewBag.ParentName = parent?.Name ?? "-";
             }
+            else
+            {
+                ViewBag.ParentName = "-";
+            }
+
             return View(category);
         }
 
@@ -143,9 +168,10 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 {
                     FileHelper.FileRemover(category.Image, "/Img/Categories/");
                 }
+
                 _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
             }
-            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
