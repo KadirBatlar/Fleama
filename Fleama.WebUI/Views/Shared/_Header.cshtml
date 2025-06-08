@@ -15,18 +15,20 @@
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Anasayfa</a>
+                    <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Anasayfa</a>
                 </li>
+                @await Component.InvokeAsync("Categories")
                 <li class="nav-item">
-                    <a class="nav-link" href="/Home/ContactUs">İletişim</a>
+                    <a class="nav-link text-dark" asp-controller="Home" asp-action="ContactUs">İletişim</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" role="button">
                         Giriş Yap
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">Giriş</a></li>
-                        <li><a class="dropdown-item" href="#">Üye Ol</a></li>
+
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/Account/SignIn">Giriş</a></li>
+                        <li><a class="dropdown-item" href="/Account/SignUp">Üye Ol</a></li>
                     </ul>
                 </li>
             </ul>
