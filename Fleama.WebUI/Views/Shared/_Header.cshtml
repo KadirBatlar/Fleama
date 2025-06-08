@@ -6,7 +6,7 @@
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>            
-            <div class="navbar-collapse collapse d-sm-inline-flex">
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-evenly">
                 <form action="/Product/Index" method="get" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
                     <input name="search" type="search" class="form-control" placeholder="Arama..." aria-label="Search">
                 </form>
@@ -27,8 +27,8 @@
                     </a>
 
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Giriş</a></li>
-                        <li><a class="dropdown-item" href="#">Üye Ol</a></li>
+                        <li><a class="dropdown-item" href="/Account/SignIn">Giriş</a></li>
+                        <li><a class="dropdown-item" href="/Account/SignUp">Üye Ol</a></li>
                     </ul>
                 </div>
             </div>
