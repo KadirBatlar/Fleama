@@ -1,58 +1,56 @@
-﻿@model AppUser
+﻿@model Fleama.Core.Entities.AppUser
 
 @{
-	ViewData["Title"] = "Kullanıcı Sil";
+    ViewData["Title"] = "Kullanıcı Sil";
+    Layout = "_LayoutAdmin";
 }
-<h3>Kullanıcı silinecek! Onaylıyor musunuz?</h3>
-<div>
-	<h4>Kullanıcı</h4>
-	<dl class="row">
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Id)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Id)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Name)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Name)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Surname)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Surname)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.UserName)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.UserName)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Email)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Email)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Phone)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Phone)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.IsAdmin)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.IsAdmin)
-		</dd>
-	</dl>
-	<form asp-action="Delete">
-		<input type="hidden" asp-for="Id"/>
-		<input type="submit" value="Sil" class="btn btn-danger"/>
-		<a asp-action="Index">Listeye Dön</a>
-	</form>
+
+<h2><i class="fas fa-trash-alt me-2 text-danger"></i> Kullanıcıyı Sil</h2>
+
+<div class="alert alert-warning mt-3">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    Bu kullanıcıyı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Ad</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3">Soyad</dt>
+            <dd class="col-sm-9">@Model.Surname</dd>
+
+            <dt class="col-sm-3">Kullanıcı Adı</dt>
+            <dd class="col-sm-9">@Model.UserName</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3">Telefon</dt>
+            <dd class="col-sm-9">@Model.Phone</dd>
+
+            <dt class="col-sm-3">Yönetici mi?</dt>
+            <dd class="col-sm-9">
+                @if (Model.IsAdmin)
+                {
+                    <span class="badge bg-success">Evet</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Hayır</span>
+                }
+            </dd>
+        </dl>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-outline-danger">
+                <i class="fas fa-trash-alt"></i> Sil
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary ms-2">
+                <i class="fas fa-arrow-left"></i> Vazgeç
+            </a>
+        </form>
+    </div>
 </div>

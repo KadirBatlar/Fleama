@@ -1,0 +1,32 @@
+﻿@model Fleama.Core.Entities.News
+
+@{
+    ViewData["Title"] = "Haber Detayı";
+    Layout = "_LayoutAdmin";
+}
+
+<h2><i class="fas fa-eye me-2"></i> Haber Detayı</h2>
+
+<div class="card shadow-sm mt-4">
+    <div class="row g-0">
+        <div class="col-md-4 text-center p-3">
+            @if (!string.IsNullOrEmpty(Model.Image))
+            {
+                <img src="~/Img/News/@Model.Image" class="img-fluid rounded shadow-sm" alt="@Model.Name" style="max-height: 300px;" />
+            }
+            else
+            {
+                <span class="text-muted fst-italic">Görsel bulunamadı</span>
+            }
+        </div>
+        <div class="col-md-8 p-4">
+            <h4 class="text-primary">@Model.Name</h4>
+            <hr />
+            <p>@Model.Description</p>
+        </div>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-outline-secondary mt-3">
+    <i class="fas fa-arrow-left"></i> Geri Dön
+</a>

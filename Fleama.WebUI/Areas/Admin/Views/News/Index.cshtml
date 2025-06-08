@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Fleama.Core.Entities.News>
+
+@{
+    ViewData["Title"] = "Haberler / Duyurular";
+    Layout = "_LayoutAdmin";
+}
+
+<h2 class="mb-4"><i class="fas fa-newspaper me-2"></i> Haberler / Duyurular</h2>
+
+<a asp-action="Create" class="btn btn-outline-primary mb-3">
+    <i class="fas fa-plus"></i> Yeni Ekle
+</a>
+
+<table class="table table-hover table-bordered text-center align-middle shadow-sm">
+    <thead class="table-light">
+        <tr>
+            <th style="width: 80px;">Görsel</th>
+            <th style="width: 200px;">Başlık</th>
+            <th>Açıklama</th>
+            <th style="width: 180px;">İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Image))
+                        {
+                            <img src="~/Img/News/@item.Image" width="60" height="60" style="object-fit: cover; border-radius: 6px;" />
+                        }
+                        else
+                        {
+                            <div class="text-muted small fst-italic">Yok</div>
+                        }
+                    </td>
+                    <td class="fw-semibold">@item.Name</td>
+                    <td class="text-start">@item.Description</td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-dark me-1" asp-action="Edit" asp-route-id="@item.Id" title="Düzenle">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a class="btn btn-sm btn-outline-dark me-1" asp-action="Detail" asp-route-id="@item.Id" title="Detay">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id" title="Sil">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-muted">Henüz bir haber eklenmemiş.</td>
+            </tr>
+        }
+    </tbody>
+</table>

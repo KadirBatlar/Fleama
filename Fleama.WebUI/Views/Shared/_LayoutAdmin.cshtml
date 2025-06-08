@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="utf-8" />
@@ -7,7 +10,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" />
     <link rel="stylesheet" href="/admin/css/styles.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
 
     <style>
         body {
@@ -50,10 +53,28 @@
             font-weight: 600;
             color: #000;
         }
+
+        .sidebar-toggle {
+            margin-left: 0.5rem;
+            margin-right: 1rem;
+            color: #c71c66 !important;
+            font-size: 1.5rem;
+            border: none;
+            background: transparent;
+        }
     </style>
 </head>
 <body class="sb-nav-fixed">
-    <partial name="_Navbar" />
+
+    <!-- ÜST NAVBAR BAŞLANGIÇ -->
+    <div class="d-flex align-items-center justify-content-between px-3 py-2 bg-white border-bottom">
+        <button class="btn sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <h4 class="mb-0" style="color: #c71c66;">Fleama Admin</h4>
+    </div>
+    <!-- ÜST NAVBAR BİTİŞ -->
+
     <div id="layoutSidenav">
         <partial name="_Sidebar" />
         <div id="layoutSidenav_content">
