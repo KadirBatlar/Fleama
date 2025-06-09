@@ -1,13 +1,14 @@
 ﻿using Fleama.Core.Entities;
 using Fleama.Data;
 using Fleama.WebUI.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fleama.WebUI.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class ProductController : Controller
     {
         private readonly DatabaseContext _context;
@@ -29,7 +30,6 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             return Ok(products);
         }
 
-        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var products = await _context.Set<Product>().FindAsync(id);

@@ -1,11 +1,12 @@
 ﻿using Fleama.Core.Entities;
 using Fleama.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fleama.WebUI.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class AppUserController : Controller
     {
 
@@ -27,7 +28,6 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             return Ok(users);
         }
 
-        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var user = await _context.Set<AppUser>().FindAsync(id);
