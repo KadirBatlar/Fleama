@@ -1,11 +1,12 @@
 ﻿using Fleama.Core.Entities;
 using Fleama.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fleama.WebUI.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class ContactController : Controller
     {
         private readonly DatabaseContext _context;

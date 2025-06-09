@@ -1,12 +1,13 @@
 ﻿using Fleama.Core.Entities;
 using Fleama.Data;
 using Fleama.WebUI.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fleama.WebUI.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class NewsController : Controller
     {
         private readonly DatabaseContext _context;
@@ -28,7 +29,6 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             return Ok(news);
         }
 
-        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var news = await _context.Set<News>().FindAsync(id);
