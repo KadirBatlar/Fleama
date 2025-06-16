@@ -63,7 +63,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
+            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
 
@@ -80,7 +80,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
+            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
             return View(category);
         }
 
@@ -93,7 +93,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (category == null)
                 return NotFound();
 
-            ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
+            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
             return View(category);
         }
 
@@ -132,7 +132,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
+            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
             return View(category);
         }
 

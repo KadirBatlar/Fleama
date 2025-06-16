@@ -1,0 +1,50 @@
+﻿@model List<Product>
+@{
+    ViewData["Title"] = "Favorilerim";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Favoriler</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Ürün</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="/Img/Products/@item.Image" alt="" height="37" />
+                                </td>
+                                <td>
+                                    <a href="/Products/Details/@item.Id">
+                                        @item.Name
+                                    </a>
+                                </td>
+                                <td>
+                                    <form asp-action="Remove" asp-controller="Favorites">
+                                        <input type="hidden" name="productId" value="@item.Id" />
+                                        <button class="btn btn-sm btn-danger" type="submit" style="box-shadow:none">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
