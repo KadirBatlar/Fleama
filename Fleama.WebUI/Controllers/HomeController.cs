@@ -1,29 +1,30 @@
-using System.Diagnostics;
-using System.Threading.Tasks;
 using Fleama.Core.Entities;
-using Fleama.Data;
+using Fleama.Service.Abstract;
 using Fleama.WebUI.Models;
-using Fleama.WebUI.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace Fleama.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly DatabaseContext _context;
+        private readonly IService<Product> _productService;
+        private readonly IService<News> _newsService;
+        private readonly IService<Contact> _contactService;
 
-        public HomeController(DatabaseContext context)
+        public HomeController(IService<Product> productService, IService<News> newsService, IService<Contact> contactService)
         {
-            _context = context;
+            _productService = productService;
+            _newsService = newsService;
+            _contactService = contactService;
         }
 
         public async Task<IActionResult> Index()
         {
             var model = new HomePageViewModel()
             {
-                Products = await _context.Products.Where(p => p.IsActive && p.IsHome).ToListAsync(), 
-                News = await _context.News.ToListAsync()
+                Products = await _productService.GetAllAsync(p => p.IsActive && p.IsHome), 
+                News = await _newsService.GetAllAsync(),
             };
             return View(model);
         }
@@ -50,8 +51,8 @@ namespace Fleama.WebUI.Controllers
             {
                 try
                 {
-                    await _context.Contacts.AddAsync(contact);
-                    var result = await _context.SaveChangesAsync();
+                    await _contactService.AddAsync(contact);
+                    var result = await _contactService.SaveChangesAsync();
                     if(result > 0)
                     {
                         TempData["Message"] = @"<div class=""alert alert-success alert-dismissible fade show"" role=""alert"">

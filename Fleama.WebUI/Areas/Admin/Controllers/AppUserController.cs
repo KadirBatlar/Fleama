@@ -1,5 +1,5 @@
 ﻿using Fleama.Core.Entities;
-using Fleama.Data;
+using Fleama.Service.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,27 +10,27 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
     public class AppUserController : Controller
     {
 
-        private readonly DatabaseContext _context;
+        private readonly IService<AppUser> _service;
 
-        public AppUserController(DatabaseContext context)
+        public AppUserController(IService<AppUser> service)
         {
-            _context = context;
+            _service = service;
         }
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.AppUsers.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
         
         public async Task<IActionResult> GetAll()
         {
-            var users = await _context.Set<AppUser>().ToListAsync();
+            var users = await _service.GetAllAsync();
             return Ok(users);
         }
 
         public async Task<IActionResult> GetById(int id)
         {
-            var user = await _context.Set<AppUser>().FindAsync(id);
+            var user = await _service.FindByIdAsync(id);
             if (user == null)
                 return NotFound();
 
@@ -43,7 +43,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (id == null)
                 return NotFound();
 
-            var user = await _context.AppUsers.FirstOrDefaultAsync(x => x.Id == id);
+            var user = await _service.GetAsync(x => x.Id == id);
             if (user == null)
                 return NotFound();
 
@@ -59,8 +59,8 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         {
             if(ModelState.IsValid)
             {
-                _context.AppUsers.Add(user);
-                await _context.SaveChangesAsync();
+                _service.Add(user);
+                await _service.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -74,7 +74,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var user = await _context.AppUsers.FindAsync(id);
+            var user = await _service.FindByIdAsync(id.Value);
             if(user == null)
             {
                 return NotFound();
@@ -93,8 +93,8 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
+                    _service.Update(user);
+                    await _service.SaveChangesAsync();
                 }
                 catch(DbUpdateConcurrencyException)
                 {
@@ -112,7 +112,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var user = await _context.AppUsers.FirstOrDefaultAsync(x => x.Id == id);
+            var user = await _service.GetAsync(x => x.Id == id);
             if (user == null)
             {
                 return NotFound();
@@ -123,12 +123,12 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirm(int id)
         {
-            var user = await _context.AppUsers.FindAsync(id);
+            var user = await _service.FindByIdAsync(id);
             if (user != null)
             {
-                _context.AppUsers.Remove(user);
+                _service.Delete(user);
             }            
-            await _context.SaveChangesAsync();
+            await _service.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }

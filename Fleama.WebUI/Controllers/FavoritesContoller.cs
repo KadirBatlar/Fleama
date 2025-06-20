@@ -1,5 +1,5 @@
 ﻿using Fleama.Core.Entities;
-using Fleama.Data;
+using Fleama.Service.Abstract;
 using Fleama.WebUI.ExtensionMethods;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,11 +7,11 @@ namespace Fleama.WebUI.Controllers
 {
     public class FavoritesContoller : Controller
     {
-        private readonly DatabaseContext _context;
+        private readonly IService<Product> _service;
 
-        public FavoritesContoller(DatabaseContext context)
+        public FavoritesContoller(IService<Product> service)
         {
-            _context = context;
+            _service = service;
         }
 
         public IActionResult Index()
@@ -28,7 +28,7 @@ namespace Fleama.WebUI.Controllers
         public IActionResult Add(int productId)
         {
             var favorites = GetFavorites();
-            var product = _context.Products.Find(productId);
+            var product = _service.FindById(productId);
             if (product != null && !favorites.Any(p => p.Id == productId)) 
             { 
                 favorites.Add(product);
@@ -40,7 +40,7 @@ namespace Fleama.WebUI.Controllers
         public IActionResult Remove(int productId)
         {
             var favorites = GetFavorites();
-            var product = _context.Products.Find(productId);
+            var product = _service.FindById(productId);
             if (product != null && favorites.Any(p => p.Id == productId)) 
             { 
                 favorites.RemoveAll(p => p.Id == productId);

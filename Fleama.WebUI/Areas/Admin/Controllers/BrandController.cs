@@ -1,5 +1,5 @@
 ﻿using Fleama.Core.Entities;
-using Fleama.Data;
+using Fleama.Service.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,27 +9,27 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
     [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class BrandController : Controller
     {
-        private readonly DatabaseContext _context;
+        private readonly IService<Brand> _service;
 
-        public BrandController(DatabaseContext context)
+        public BrandController(IService<Brand> service)
         {
-            _context = context;
+            _service = service;
         }
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Brands.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
         public async Task<IActionResult> GetAll()
         {
-            var brands = await _context.Set<Brand>().ToListAsync();
+            var brands = await _service.GetAllAsync();
             return Ok(brands);
         }
 
         public async Task<IActionResult> GetById(int id)
         {
-            var brand = await _context.Set<Brand>().FindAsync(id);
+            var brand = await _service.FindByIdAsync(id);
             if (brand == null)
                 return NotFound();
 
@@ -41,7 +41,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (id == null)
                 return NotFound();
 
-            var brand = await _context.Brands.FirstOrDefaultAsync(x => x.Id == id);
+            var brand = await _service.GetAsync(x => x.Id == id);
             if (brand == null)
                 return NotFound();
 
@@ -58,8 +58,8 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Brands.Add(brand);
-                await _context.SaveChangesAsync();
+                _service.Add(brand);
+                await _service.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -73,7 +73,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var brand = await _context.Brands.FindAsync(id);
+            var brand = await _service.FindByIdAsync(id.Value);
             if (brand == null)
             {
                 return NotFound();
@@ -91,8 +91,8 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(brand);
-                    await _context.SaveChangesAsync();
+                    _service.Update(brand);
+                    await _service.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -110,7 +110,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var brand = await _context.Brands.FirstOrDefaultAsync(x => x.Id == id);
+            var brand = await _service.GetAsync(x => x.Id == id);
             if (brand == null)
             {
                 return NotFound();
@@ -121,12 +121,12 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirm(int id)
         {
-            var brand = await _context.Brands.FindAsync(id);
+            var brand = await _service.FindByIdAsync(id);
             if (brand != null)
             {
-                _context.Brands.Remove(brand);
+                _service.Delete(brand);
             }
-            await _context.SaveChangesAsync();
+            await _service.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }

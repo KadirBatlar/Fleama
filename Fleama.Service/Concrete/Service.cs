@@ -90,6 +90,6 @@ namespace Fleama.Service.Concrete
         public void Update(T entity)
         {
             _dbSet.Update(entity);
-        }
+        }        
     }
 }

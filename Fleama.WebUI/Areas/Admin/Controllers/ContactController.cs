@@ -1,5 +1,5 @@
 ﻿using Fleama.Core.Entities;
-using Fleama.Data;
+using Fleama.Service.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,15 +9,16 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
     [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class ContactController : Controller
     {
-        private readonly DatabaseContext _context;
+        private readonly IService<Contact> _service;
 
-        public ContactController(DatabaseContext context)
+        public ContactController(IService<Contact> service)
         {
-            _context = context;
+            _service = service;
         }
+
         public IActionResult Index()
         {
-            return View(_context.Contacts);
+            return View(_service);
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -27,7 +28,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var contact = await _context.Contacts.FindAsync(id);
+            var contact = await _service.FindByIdAsync(id.Value);
             if (contact == null)
             {
                 return NotFound();
@@ -45,8 +46,8 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(contact);
-                    await _context.SaveChangesAsync();
+                    _service.Update(contact);
+                    await _service.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
