@@ -1,4 +1,6 @@
 using Fleama.Data;
+using Fleama.Service.Abstract;
+using Fleama.Service.Concrete;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 
@@ -17,6 +19,8 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddDbContext<DatabaseContext>();
+
+builder.Services.AddScoped(typeof(IService<>), typeof(Service<>));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(x =>

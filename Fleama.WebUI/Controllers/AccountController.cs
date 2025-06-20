@@ -1,10 +1,9 @@
 ﻿using Fleama.Core.Entities;
-using Fleama.Data;
+using Fleama.Service.Abstract;
 using Fleama.WebUI.Models;
 using Microsoft.AspNetCore.Authentication; //Login
 using Microsoft.AspNetCore.Authorization; //Login
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims; //Login
 
 namespace Fleama.WebUI.Controllers
@@ -12,24 +11,24 @@ namespace Fleama.WebUI.Controllers
     
     public class AccountController : Controller
     {
-        private readonly DatabaseContext _context;
+        private readonly IService<AppUser> _appUserService;
 
-
-        public AccountController(DatabaseContext context)
+        public AccountController(IService<AppUser> appUserService)
         {
-            _context = context;
+            _appUserService = appUserService;
         }
 
         [Authorize]
-        public IActionResult Index()        
+        public async Task<IActionResult> IndexAsync()        
         {
-            AppUser user = _context.AppUsers.FirstOrDefault(x => x.UserGuid.ToString() == HttpContext.User.FindFirst("UserGuid").Value);
+            AppUser user = await _appUserService.GetAsync(x => x.UserGuid.ToString() == HttpContext.User.FindFirst("UserGuid").Value);
             if(user is null)
             {
                 return NotFound();
             }
             var model = new UserEditViewModel()
             {
+                UserName = user.UserName,
                 Email = user.Email,
                 Id = user.Id,
                 Name = user.Name,
@@ -41,25 +40,25 @@ namespace Fleama.WebUI.Controllers
         }
 
         [HttpPost, Authorize]
-        public IActionResult Index(UserEditViewModel model)
+        public async Task<IActionResult> IndexAsync(UserEditViewModel model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    AppUser user = _context.AppUsers
-                        .FirstOrDefault(x => x.UserGuid.ToString() ==HttpContext.User.FindFirst("UserGuid").Value);
+                    AppUser user = await _appUserService.GetAsync(x => x.UserGuid.ToString() == HttpContext.User.FindFirst("UserGuid").Value);
 
                     if (user is not null)
                     {
+                        user.UserName = model.UserName;
                         user.Surname = model.Surname;
                         user.Phone = model.Phone;
                         user.Name = model.Name;
                         user.Password = model.Password;
                         user.Email = model.Email;
 
-                        _context.AppUsers.Update(user);
-                        var result = _context.SaveChanges();
+                        _appUserService.Update(user);
+                        var result = _appUserService.SaveChanges();
 
                         if (result > 0)
                         {
@@ -91,7 +90,7 @@ namespace Fleama.WebUI.Controllers
             {
                 try
                 {
-                    var account = await _context.AppUsers.FirstOrDefaultAsync(x => x.Email == loginViewModel.Email & x.Password == loginViewModel.Password & x.IsActive);
+                    var account = await _appUserService.GetAsync(x => x.Email == loginViewModel.Email & x.Password == loginViewModel.Password & x.IsActive);
                     if (account == null)
                     {
                         ModelState.AddModelError("", "Giriş Başarısız!");
@@ -133,8 +132,8 @@ namespace Fleama.WebUI.Controllers
             appUser.IsAdmin = false;
             if(ModelState.IsValid)
             {
-                await _context.AddAsync(appUser);
-                await _context.SaveChangesAsync();
+                await _appUserService.AddAsync(appUser);
+                await _appUserService.SaveChangesAsync();
                 return RedirectToAction("Index", "Home");
             }
             return View(appUser);
