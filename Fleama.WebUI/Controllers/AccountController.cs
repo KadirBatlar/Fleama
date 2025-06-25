@@ -139,10 +139,14 @@ namespace Fleama.WebUI.Controllers
             return View(appUser);
         }
 
-        public async Task<IActionResult> SignOutAsync()
+        public IActionResult PasswordRenew()
         {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("SignIn");
+            return View();
+        }
+        [HttpPost]
+        public IActionResult PasswordRenew(string email)
+        {
+            return View();
         }
     }
 }
