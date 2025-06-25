@@ -6,9 +6,9 @@ namespace Fleama.WebUI.ViewComponents
 {
     public class Categories : ViewComponent
     {
-        private readonly IService<Category> _service;
+        private readonly IBaseService<Category> _service;
 
-        public Categories(IService<Category> service)
+        public Categories(IBaseService<Category> service)
         {
             _service = service;
         }

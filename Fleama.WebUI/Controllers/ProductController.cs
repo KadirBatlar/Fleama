@@ -8,9 +8,9 @@ namespace Fleama.WebUI.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly IService<Product> _service;
+        private readonly IBaseService<Product> _service;
 
-        public ProductController(IService<Product> service)
+        public ProductController(IBaseService<Product> service)
         {
             _service = service;
         }

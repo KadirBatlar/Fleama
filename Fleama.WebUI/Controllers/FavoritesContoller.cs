@@ -7,9 +7,9 @@ namespace Fleama.WebUI.Controllers
 {
     public class FavoritesContoller : Controller
     {
-        private readonly IService<Product> _service;
+        private readonly IBaseService<Product> _service;
 
-        public FavoritesContoller(IService<Product> service)
+        public FavoritesContoller(IBaseService<Product> service)
         {
             _service = service;
         }

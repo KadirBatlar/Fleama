@@ -10,9 +10,9 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
     [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class NewsController : Controller
     {
-        private readonly IService<News> _service;
+        private readonly IBaseService<News> _service;
 
-        public NewsController(IService<News> service)
+        public NewsController(IBaseService<News> service)
         {
             _service = service;
         }

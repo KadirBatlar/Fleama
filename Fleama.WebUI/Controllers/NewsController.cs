@@ -7,9 +7,9 @@ namespace Fleama.WebUI.Controllers
     public class NewsController : Controller
     {
 
-        private readonly IService<News> _service;
+        private readonly IBaseService<News> _service;
 
-        public NewsController(IService<News> service)
+        public NewsController(IBaseService<News> service)
         {
             _service = service;
         }
@@ -22,11 +22,11 @@ namespace Fleama.WebUI.Controllers
         public async Task<IActionResult> Detail(int? id)
         {
             if (id == null)
-                return NotFound();
+                return NotFound("Geçersiz İstek!");
 
-            var news = await _service.GetAsync(x => x.Id == id);
+            var news = await _service.GetAsync(x => x.Id == id && x.IsActive);
             if (news == null)
-                return NotFound();
+                return NotFound("Geçerli Bir Kampanya Bulunamadı.");
 
             return View(news);
         }

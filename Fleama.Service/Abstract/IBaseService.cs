@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace Fleama.Service.Abstract
 {
-    public interface IService<T> where T : class, IEntity, new()
+    public interface IBaseService<T> where T : class, IEntity, new()
     {
         List<T> GetAll();
         List<T> GetAll(Expression<Func<T, bool>> expression);
@@ -21,6 +21,8 @@ namespace Fleama.Service.Abstract
         Task<List<T>> GetAllAsync();
         Task<List<T>> GetAllAsync(Expression<Func<T, bool>> expression);
         Task AddAsync(T entity);
-        Task<int> SaveChangesAsync();        
+        Task<int> SaveChangesAsync();
+
+        Task<int> GetTotalCountAsync();
     }
 }

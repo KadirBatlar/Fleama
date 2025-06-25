@@ -1,25 +1,28 @@
-﻿using Fleama.Data;
+﻿using Fleama.Core.Entities;
+using Fleama.Service.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Fleama.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class MainController : Controller
     {
-        private readonly DatabaseContext _context;
-
-        public MainController(DatabaseContext context)
+        private readonly IBaseService<AppUser> _appUserService;
+        private readonly IBaseService<Category> _categoryService;
+        private readonly IBaseService<News> _newsService;
+        public MainController(IBaseService<AppUser> appUserService, IBaseService<Category> categoryService, IBaseService<News> newsService)
         {
-            _context = context;
+            _appUserService = appUserService;
+            _categoryService = categoryService;
+            _newsService = newsService;
         }
 
         public async Task<IActionResult> Index()
         {
-            ViewBag.TotalUsers = await _context.AppUsers.CountAsync();
-            ViewBag.TotalCategories = await _context.Categories.CountAsync();
-            ViewBag.TotalNews = await _context.News.CountAsync();
+            ViewBag.TotalUsers = await _appUserService.GetTotalCountAsync();
+            ViewBag.TotalCategories = await _categoryService.GetTotalCountAsync();
+            ViewBag.TotalNews = await _newsService.GetTotalCountAsync();
 
             return View();
         }

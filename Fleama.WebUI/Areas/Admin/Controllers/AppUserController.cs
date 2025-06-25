@@ -10,9 +10,9 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
     public class AppUserController : Controller
     {
 
-        private readonly IService<AppUser> _service;
+        private readonly IBaseService<AppUser> _service;
 
-        public AppUserController(IService<AppUser> service)
+        public AppUserController(IBaseService<AppUser> service)
         {
             _service = service;
         }

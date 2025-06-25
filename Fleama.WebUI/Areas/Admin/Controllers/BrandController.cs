@@ -9,9 +9,9 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
     [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class BrandController : Controller
     {
-        private readonly IService<Brand> _service;
+        private readonly IBaseService<Brand> _service;
 
-        public BrandController(IService<Brand> service)
+        public BrandController(IBaseService<Brand> service)
         {
             _service = service;
         }

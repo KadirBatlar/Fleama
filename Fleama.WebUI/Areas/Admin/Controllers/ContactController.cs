@@ -9,9 +9,9 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
     [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class ContactController : Controller
     {
-        private readonly IService<Contact> _service;
+        private readonly IBaseService<Contact> _service;
 
-        public ContactController(IService<Contact> service)
+        public ContactController(IBaseService<Contact> service)
         {
             _service = service;
         }

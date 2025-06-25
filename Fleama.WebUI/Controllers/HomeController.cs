@@ -8,11 +8,11 @@ namespace Fleama.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IService<Product> _productService;
-        private readonly IService<News> _newsService;
-        private readonly IService<Contact> _contactService;
+        private readonly IBaseService<Product> _productService;
+        private readonly IBaseService<News> _newsService;
+        private readonly IBaseService<Contact> _contactService;
 
-        public HomeController(IService<Product> productService, IService<News> newsService, IService<Contact> contactService)
+        public HomeController(IBaseService<Product> productService, IBaseService<News> newsService, IBaseService<Contact> contactService)
         {
             _productService = productService;
             _newsService = newsService;
@@ -24,7 +24,7 @@ namespace Fleama.WebUI.Controllers
             var model = new HomePageViewModel()
             {
                 Products = await _productService.GetAllAsync(p => p.IsActive && p.IsHome), 
-                News = await _newsService.GetAllAsync(),
+                News = await _newsService.GetAllAsync(n => n.IsActive)
             };
             return View(model);
         }

@@ -7,9 +7,9 @@ namespace Fleama.WebUI.Controllers
 {
     public class CategoriesController : Controller
     {
-        private readonly IService<Category> _service;
+        private readonly IBaseService<Category> _service;
 
-        public CategoriesController(IService<Category> service)
+        public CategoriesController(IBaseService<Category> service)
         {
             _service = service;
         }

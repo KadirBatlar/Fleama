@@ -6,12 +6,12 @@ using System.Linq.Expressions;
 
 namespace Fleama.Service.Concrete
 {
-    public class Service<T> : IService<T> where T : class, IEntity, new()
+    public class BaseService<T> : IBaseService<T> where T : class, IEntity, new()
     {
         internal DatabaseContext _context;
         internal DbSet<T> _dbSet;
 
-        public Service(DatabaseContext context)
+        public BaseService(DatabaseContext context)
         {
             _context = context;
             _dbSet = context.Set<T>();
@@ -90,6 +90,11 @@ namespace Fleama.Service.Concrete
         public void Update(T entity)
         {
             _dbSet.Update(entity);
-        }        
+        }
+
+        public async Task<int> GetTotalCountAsync()
+        {
+            return await _context.AppUsers.CountAsync();
+        }
     }
 }

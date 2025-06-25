@@ -11,9 +11,9 @@ namespace Fleama.WebUI.Controllers
     
     public class AccountController : Controller
     {
-        private readonly IService<AppUser> _appUserService;
+        private readonly IBaseService<AppUser> _appUserService;
 
-        public AccountController(IService<AppUser> appUserService)
+        public AccountController(IBaseService<AppUser> appUserService)
         {
             _appUserService = appUserService;
         }
