@@ -5,11 +5,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+services.AddControllersWithViews();
 
-builder.Services.AddSession(options =>
+services.AddSession(options =>
 {
     options.Cookie.Name = ".Fleama.Session";
     options.Cookie.HttpOnly = true;
@@ -18,13 +19,15 @@ builder.Services.AddSession(options =>
     options.IOTimeout = TimeSpan.FromMinutes(10);
 });
 
-builder.Services.AddDbContext<DatabaseContext>();
+services.AddDbContext<DatabaseContext>();
 
-builder.Services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IProductService, ProductService>();
+services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
+services.AddScoped<ICategoryService, CategoryService>();
+services.AddScoped<IProductService, ProductService>();
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+services.AddHttpContextAccessor();
+
+services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(x =>
 {
     x.LoginPath = "/Account/SignIn";
@@ -34,7 +37,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     x.Cookie.IsEssential = true;
 });
 
-builder.Services.AddAuthorization(x =>
+services.AddAuthorization(x =>
 {
     x.AddPolicy("AdminPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
     x.AddPolicy("UserPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "Admin", "User"));
