@@ -11,7 +11,7 @@ namespace Fleama.Core.Entities
         public string? Description { get; set; }
 
         [Display(Name = "Görsel")]
-        public string? Image { get; set; }
+        public Image? Image { get; set; }
 
         [Display(Name = "Üst Menüde Gösterilsin mi?")]
         public bool IsTopMenu { get; set; }

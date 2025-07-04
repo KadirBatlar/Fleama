@@ -12,10 +12,11 @@ namespace Fleama.Data
         public DbSet<News> News { get; set; }
         public DbSet<Product> Products { get; set; } 
         public DbSet<Brand> Brands { get; set; }
+        public DbSet<Image> Images { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=localhost; Database=FleamaDb2; Trusted_Connection=True; TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer(@"Server=KADIR; Database=FleamaDb; Trusted_Connection=True; TrustServerCertificate=True;");
             base.OnConfiguring(optionsBuilder);            
         }
 
