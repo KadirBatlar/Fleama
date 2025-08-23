@@ -10,8 +10,10 @@ namespace Fleama.Core.Entities
         [Display(Name = "Açıklama")]
         public string? Description { get; set; }
 
-        [Display(Name = "Görsel")]
-        public Image? Image { get; set; }
+        public int? ImageId { get; set; }
+        
+        [Display(Name = "Görseller")]
+        public Image Image { get; set; }
 
         [Display(Name = "Üst Menüde Gösterilsin mi?")]
         public bool IsTopMenu { get; set; }

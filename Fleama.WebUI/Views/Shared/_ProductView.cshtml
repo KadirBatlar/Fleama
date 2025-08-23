@@ -1,7 +1,7 @@
 ﻿@model Product
 
 <div class="col mb-5">
-    <div class="card h-100">
+    <div class="card h-100 position-relative">
         <!-- Sale badge-->
         <div class="badge position-absolute" style="top: 0.5rem; right: 0.5rem">
             <form asp-action="Add" asp-controller="Favorites">
@@ -11,20 +11,46 @@
                 </button>
             </form>
         </div>
-        <!-- Product image-->
+
+        <!-- Product images carousel -->
         <a href="/Product/Detail/@Model.Id">
-            <img class="card-img-top" src="~/Img/Products/@Model.Image" alt="@Model.Name">
+            @if (Model.Images != null && Model.Images.Any())
+            {
+                <div id="carouselProduct@Model.Id" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @for (int i = 0; i < Model.Images.Count; i++)
+                        {
+                            var image = Model.Images[i];
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <img class="d-block w-100" src="~/@image.Url" alt="@Model.Name" style="object-fit:cover; height:250px;" />
+                            </div>
+                        }
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselProduct@Model.Id" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselProduct@Model.Id" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            }
+            else
+            {
+                <span class="text-muted">Görsel yok</span>
+            }
         </a>
+
         <!-- Product details-->
         <div class="card-body p-4">
             <div class="text-center">
-                <!-- Product name-->
                 <h5 class="fw-bolder">@Model.Name</h5>
-                <!-- Product price-->
                 <span class="text-muted text-decoration-line-through"></span>
-                    @Model.Description
+                @Model.Description
             </div>
         </div>
+
         <!-- Product actions-->
         <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
             <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Takas Et</a></div>

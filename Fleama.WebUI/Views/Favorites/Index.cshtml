@@ -25,7 +25,14 @@
                         {
                             <tr>
                                 <td>
-                                    <img src="/Img/Products/@item.Image" alt="" height="37" />
+                                    @if (item.Images != null && item.Images.Any() && !string.IsNullOrEmpty(item.Images.First().Url))
+                                    {
+                                        <img src="~/@item.Images.First().Url" alt="@item.Name" height="37" style="object-fit:cover;" />
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Görsel yok</span>
+                                    }
                                 </td>
                                 <td>
                                     <a href="/Products/Details/@item.Id">
@@ -42,6 +49,12 @@
                                 </td>
                             </tr>
                         }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">Favori ürün yok</td>
+                        </tr>
                     }
                 </tbody>
             </table>

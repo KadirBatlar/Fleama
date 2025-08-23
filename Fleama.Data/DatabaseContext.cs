@@ -6,6 +6,7 @@ namespace Fleama.Data
 {
     public class DatabaseContext : DbContext
     {
+
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Contact> Contacts { get; set; }
@@ -16,8 +17,11 @@ namespace Fleama.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=KADIR; Database=FleamaDb; Trusted_Connection=True; TrustServerCertificate=True;");
-            base.OnConfiguring(optionsBuilder);            
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(@"Server=KADIR; Database=FleamaDb; Trusted_Connection=True; TrustServerCertificate=True;");
+            }
+            base.OnConfiguring(optionsBuilder);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -25,5 +25,6 @@ namespace Fleama.Service.Concrete
                 .Include(p => p.Category)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
+
     }
 }

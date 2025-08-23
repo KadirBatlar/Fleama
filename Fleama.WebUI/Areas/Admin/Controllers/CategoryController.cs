@@ -1,4 +1,5 @@
 ﻿using Fleama.Core.Entities;
+using Fleama.Core.Enums;
 using Fleama.Data;
 using Fleama.Service.Abstract;
 using Fleama.Service.Concrete;
@@ -73,20 +74,34 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Category category, IFormFile? image)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (image != null)
-                    category.Image = await FileHelper.FileLoaderAsync(image, "/Img/Categories/");
-
-                await _categoryService.AddAsync(category);
-                await _categoryService.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var categories = _categoryService.GetAll();
+                ViewBag.Categories = new SelectList(categories, "Id", "Name");
+                return View(category);
             }
 
-            var categories = _categoryService.GetAll();
-            ViewBag.Categories = new SelectList(categories, "Id", "Name");
-            return View(category);
+            if (image != null && image.Length > 0)
+            {
+                var savedPath = await FileHelper.FileLoaderAsync(image, "/Img/Categories");
+                if (!string.IsNullOrEmpty(savedPath))
+                {
+                    category.Image = new Image
+                    {
+                        Url = savedPath,
+                        ReferenceId = category.Id,
+                        ImageType = ImageType.Category, 
+                    };
+                }
+            }
+
+            await _categoryService.AddAsync(category);
+            await _categoryService.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
+
+
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -114,11 +129,20 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 {
                     if (image != null)
                     {
-                        category.Image = await FileHelper.FileLoaderAsync(image, "/Img/Categories/");
+                        var savedPath = await FileHelper.FileLoaderAsync(image, "/Img/Categories/");
+                        if (!string.IsNullOrEmpty(savedPath))
+                        {
+                            category.Image = new Image
+                            {
+                                Url = savedPath,
+                                ReferenceId = category.Id,
+                                ImageType = ImageType.Category,
+                            };
+                        }
                     }
                     else if (removeImg)
                     {
-                        category.Image = string.Empty;
+                        category.Image = null;
                     }
                     else
                     {
@@ -168,11 +192,12 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirm(int id)
         {
             var category = await _categoryService.FindByIdAsync(id);
+
             if (category != null)
             {
-                if (!string.IsNullOrEmpty(category.Image))
+                if (category.Image != null && !string.IsNullOrEmpty(category.Image.Url))
                 {
-                    FileHelper.FileRemover(category.Image, "/Img/Categories/");
+                    FileHelper.FileRemover(category.Image.Url, "/Img/Categories/");
                 }
 
                 _categoryService.Delete(category);
@@ -181,5 +206,6 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

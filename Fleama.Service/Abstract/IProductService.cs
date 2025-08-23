@@ -6,5 +6,6 @@ namespace Fleama.Service.Abstract
     {
         Task<List<Product>> GetAllWithBrandAndCategoryAsync();
         Task<Product> GetByIdWithBrandAndCategoryAsync(int id);
+
     }
 }
