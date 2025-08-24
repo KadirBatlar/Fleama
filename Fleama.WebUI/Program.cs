@@ -2,6 +2,7 @@ using Fleama.Data;
 using Fleama.Service.Abstract;
 using Fleama.Service.Concrete;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +20,10 @@ services.AddSession(options =>
     options.IOTimeout = TimeSpan.FromMinutes(10);
 });
 
-services.AddDbContext<DatabaseContext>();
+services.AddDbContext<DatabaseContext>(options  =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
 services.AddScoped<ICategoryService, CategoryService>();
