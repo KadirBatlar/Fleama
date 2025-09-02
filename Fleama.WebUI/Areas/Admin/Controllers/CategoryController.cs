@@ -1,5 +1,8 @@
 ﻿using Fleama.Core.Entities;
+using Fleama.Core.Enums;
 using Fleama.Data;
+using Fleama.Service.Abstract;
+using Fleama.Service.Concrete;
 using Fleama.WebUI.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,28 +13,28 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class CategoryController : Controller
-    {
-        private readonly DatabaseContext _context;
+    {        
+        private readonly ICategoryService _categoryService;
 
-        public CategoryController(DatabaseContext context)
+        public CategoryController(ICategoryService categoryService)
         {
-            _context = context;
+            _categoryService = categoryService;
         }
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            return View(await _categoryService.GetAllAsync());
         }
 
         public async Task<IActionResult> GetAll()
         {
-            var categories = await _context.Categories.ToListAsync();
+            var categories = await _categoryService.GetAllAsync();
             return Ok(categories);
         }
 
         public async Task<IActionResult> GetById(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _categoryService.FindByIdAsync(id);
             if (category == null)
                 return NotFound();
 
@@ -43,52 +46,76 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (id == null)
                 return NotFound();
 
-            var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+            var category = await _categoryService.GetAsync(x => x.Id == id);
             if (category == null)
                 return NotFound();
 
-            ViewBag.ParentName = category.ParentId != null
-                ? (await _context.Categories.FindAsync(category.ParentId))?.Name ?? "-"
-                : "-";
+            // Show parent category name
+            if (category.ParentId != null)
+            {
+                var parent = await _categoryService.FindByIdAsync(category.ParentId.Value);
+                ViewBag.ParentName = parent?.Name ?? "-";
+            }
+            else
+            {
+                ViewBag.ParentName = "-";
+            }
+
 
             return View(category);
         }
 
         public IActionResult Create()
         {
-            ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
+            var categories = _categoryService.GetAll();
+            ViewBag.Categories = new SelectList(categories, "Id", "Name");            
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(Category category, IFormFile? image)
         {
-            category.ParentId = 1;
+            if (!ModelState.IsValid)
 
-            if (ModelState.IsValid)
             {
-                if (image != null)
-                    category.Image = await FileHelper.FileLoaderAsync(image, "/Img/Categories/");
-
-                await _context.Categories.AddAsync(category);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var categories = _categoryService.GetAll();
+                ViewBag.Categories = new SelectList(categories, "Id", "Name");
+                return View(category);
             }
 
-            ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
-            return View(category);
+            if (image != null && image.Length > 0)
+            {
+                var savedPath = await FileHelper.FileLoaderAsync(image, "/Img/Categories");
+                if (!string.IsNullOrEmpty(savedPath))
+                {
+                    category.Image = new Image
+                    {
+                        Url = savedPath,
+                        ReferenceId = category.Id,
+                        ImageType = ImageType.Category, 
+                    };
+                }
+            }
+
+            await _categoryService.AddAsync(category);
+            await _categoryService.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
+
+
 
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _categoryService.FindByIdAsync(id.Value);
             if (category == null)
                 return NotFound();
 
-            ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
+            var categories = _categoryService.GetAll();
+            ViewBag.Categories = new SelectList(categories, "Id", "Name");
             return View(category);
         }
 
@@ -104,19 +131,30 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 {
                     if (image != null)
                     {
-                        category.Image = await FileHelper.FileLoaderAsync(image, "/Img/Categories/");
+                        var savedPath = await FileHelper.FileLoaderAsync(image, "/Img/Categories/");
+                        if (!string.IsNullOrEmpty(savedPath))
+                        {
+                            category.Image = new Image
+                            {
+                                Url = savedPath,
+                                ReferenceId = category.Id,
+                                ImageType = ImageType.Category,
+                            };
+                        }
                     }
                     else if (removeImg)
                     {
-                        category.Image = string.Empty;
+                        category.Image = null;
                     }
                     else
                     {
-                        _context.Entry(category).Property(x => x.Image).IsModified = false;
+                        // Görsel yüklenmedi, silme işaretlenmedi → mevcut görseli koru
+                        _categoryService.UpdateCategoryWithoutModifyingImage(category);
+
                     }
 
-                    _context.Update(category);
-                    await _context.SaveChangesAsync();
+                    _categoryService.Update(category);
+                    await _categoryService.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -126,7 +164,8 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
+            var categories = _categoryService.GetAll();
+            ViewBag.Categories = new SelectList(categories, "Id", "Name");            
             return View(category);
         }
 
@@ -135,13 +174,20 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (id == null)
                 return NotFound();
 
-            var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+            var category = await _categoryService.GetAsync(x => x.Id == id);
             if (category == null)
                 return NotFound();
 
-            ViewBag.ParentName = category.ParentId != null
-                ? (await _context.Categories.FindAsync(category.ParentId))?.Name ?? "-"
-                : "-";
+            if (category.ParentId != null)
+            {
+                var parent = await _categoryService.FindByIdAsync(category.ParentId.Value);
+                ViewBag.ParentName = parent?.Name ?? "-";
+            }
+            else
+            {
+                ViewBag.ParentName = "-";
+            }
+
 
             return View(category);
         }
@@ -149,16 +195,17 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirm(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _categoryService.FindByIdAsync(id);
+
             if (category != null)
             {
-                if (!string.IsNullOrEmpty(category.Image))
+                if (category.Image != null && !string.IsNullOrEmpty(category.Image.Url))
                 {
-                    FileHelper.FileRemover(category.Image, "/Img/Categories/");
+                    FileHelper.FileRemover(category.Image.Url, "/Img/Categories/");
                 }
 
-                _context.Categories.Remove(category);
-                await _context.SaveChangesAsync();
+                _categoryService.Delete(category);
+                await _categoryService.SaveChangesAsync();
             }
 
             return RedirectToAction(nameof(Index));

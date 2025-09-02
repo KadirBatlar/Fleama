@@ -1,4 +1,4 @@
-﻿@model Fleama.Core.Entities.Category
+﻿@model Category
 
 @{
     ViewData["Title"] = "Kategori Düzenle";
@@ -41,22 +41,23 @@
 
             <div class="col-md-4">
                 <label class="form-label">Kategori Görseli</label>
-                @if (!string.IsNullOrEmpty(Model.Image))
+                @if (Model.Image != null && !string.IsNullOrEmpty(Model.Image.Url))
                 {
                     <div class="mb-2">
-                        <img src="~/Img/Categories/@Model.Image" class="img-thumbnail" width="100" />
+                        <img src="~/@Model.Image.Url" class="img-thumbnail" width="100" />
                     </div>
                     <div class="form-check mb-2">
                         <input type="checkbox" class="form-check-input" id="removeImgCheck" name="removeImg" value="true" />
                         <label class="form-check-label" for="removeImgCheck">Mevcut görseli kaldır</label>
                     </div>
                 }
+
                 <input type="file" name="image" class="form-control" />
             </div>
 
             <div class="col-md-12">
                 <label asp-for="ParentId" class="form-label">Üst Kategori</label>
-                <select asp-for="ParentId" asp-items="ViewBag.Kategoriler" class="form-select">
+                <select asp-for="ParentId" asp-items="ViewBag.Categories" class="form-select">
                     <option value="">-- Seçiniz --</option>
                 </select>
                 <span asp-validation-for="ParentId" class="text-danger"></span>

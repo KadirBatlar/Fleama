@@ -1,0 +1,63 @@
+﻿@model List<Product>
+@{
+    ViewData["Title"] = "Favorilerim";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Favoriler</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Ürün</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (item.Images != null && item.Images.Any() && !string.IsNullOrEmpty(item.Images.First().Url))
+                                    {
+                                        <img src="~/@item.Images.First().Url" alt="@item.Name" height="37" style="object-fit:cover;" />
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Görsel yok</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a href="/Products/Details/@item.Id">
+                                        @item.Name
+                                    </a>
+                                </td>
+                                <td>
+                                    <form asp-action="Remove" asp-controller="Favorites">
+                                        <input type="hidden" name="productId" value="@item.Id" />
+                                        <button class="btn btn-sm btn-danger" type="submit" style="box-shadow:none">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">Favori ürün yok</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

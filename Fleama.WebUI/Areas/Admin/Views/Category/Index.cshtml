@@ -29,10 +29,11 @@
             <tr>
                 <td>@item.Name</td>
                 <td>@item.Description</td>
-                <td style="min-width: 80px;">
-                    @if (!string.IsNullOrEmpty(item.Image))
+                <td>
+                    @if (item.Image != null && !string.IsNullOrEmpty(item.Image.Url))
                     {
-                        <img src="@item.Image"
+                        <img src="~/@item.Image.Url"
+
                              alt="@item.Name"
                              style="width: 60px; height: 60px; object-fit: contain; border-radius: 4px; background-color: #fff;" />
                     }

@@ -1,18 +1,20 @@
 ﻿@model IEnumerable<Category>
 @{
-	foreach (var mainCategory in Model.Where(c => c.IsActive && c.IsTopMenu && c.ParentId == 0))
+	foreach (var mainCategory in Model.Where(c => c.ParentId == 0))
 	{
 		<div class="dropdown">
 			<a class="dropdown-toggle nav-link text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 				@mainCategory.Name
 			</a>
-
-			<ul class="dropdown-menu">
-				@foreach (var subCategory in Model.Where(c => c.IsActive && c.IsTopMenu && c.ParentId == mainCategory.Id))
-				{
-					<li><a class="dropdown-item" href="/Categories/Index/@subCategory.Id">@subCategory.Name</a></li>
-				}
-			</ul>
+			@if (Model.Where(c => c.ParentId == mainCategory.Id) is not null && Model.Where(c => c.ParentId == mainCategory.Id).Count() > 0)
+			{
+				<ul class="dropdown-menu">
+					@foreach (var subCategory in Model.Where(c => c.ParentId == mainCategory.Id))
+					{
+						<li><a class="dropdown-item" href="/Categories/Index/@subCategory.Id">@subCategory.Name</a></li>
+					}
+				</ul>
+			}			
 		</div>
 	}
 }

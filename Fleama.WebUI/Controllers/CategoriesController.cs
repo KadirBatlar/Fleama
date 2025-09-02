@@ -1,4 +1,5 @@
-﻿using Fleama.Data;
+﻿using Fleama.Core.Entities;
+using Fleama.Service.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,11 +7,11 @@ namespace Fleama.WebUI.Controllers
 {
     public class CategoriesController : Controller
     {
-        private readonly DatabaseContext _context;
+        private readonly IBaseService<Category> _service;
 
-        public CategoriesController(DatabaseContext context)
+        public CategoriesController(IBaseService<Category> service)
         {
-            _context = context;
+            _service = service;
         }
 
         public async Task<IActionResult> IndexAsync(int? id)
@@ -19,7 +20,7 @@ namespace Fleama.WebUI.Controllers
             if (id == null)
                 return NotFound();
 
-            var category = await _context.Categories.Include(p => p.Products).FirstOrDefaultAsync(x => x.Id == id);
+            var category = await _service.GetQueryable().Include(p => p.Products).FirstOrDefaultAsync(x => x.Id == id);
             if (category == null)
                 return NotFound();
 

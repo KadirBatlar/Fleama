@@ -2,35 +2,55 @@
 
 namespace Fleama.WebUI.Utils
 {
-    public class FileHelper
+    public static class FileHelper
     {
-        public static async Task<string> FileLoaderAsync(IFormFile formFile, string filePath = "/Img/")
+        private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+        private const long MaxFileSize = 5 * 1024 * 1024; // 5 MB
+
+        public static async Task<string?> FileLoaderAsync(IFormFile formFile, string folder = "Img")
         {
-            string fileName = "";
+            if (formFile == null || formFile.Length == 0)
+                return null;
 
-            if (formFile != null && formFile.Length > 0)
-            {
-                fileName = formFile.FileName.ToLower();
+            if (formFile.Length > MaxFileSize)
+                return null;
 
-                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('/'));
+            var extension = Path.GetExtension(formFile.FileName).ToLowerInvariant();
+            if (!AllowedExtensions.Contains(extension))
+                return null;
 
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
+            var newFileName = Guid.NewGuid().ToString("N") + extension;
+            var saveFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", folder);
+            var savePath = Path.Combine(saveFolder, newFileName);
 
-                string fullPath = Path.Combine(folderPath, fileName);
+            if (!Directory.Exists(saveFolder))
+                Directory.CreateDirectory(saveFolder);
 
-                using var stream = new FileStream(fullPath, FileMode.Create);
-                await formFile.CopyToAsync(stream);
-            }
+            using var stream = new FileStream(savePath, FileMode.Create);
+            await formFile.CopyToAsync(stream);
 
-            return fileName;
+            // wwwroot sonrası yolu dön (örn: /Img/abcd123.png)
+            return $"/{folder}/{newFileName}".Replace("\\", "/");
         }
 
-        public static bool FileRemover(string fileName, string filePath = "/Img/")
+        public static async Task<List<string>> FileLoaderMultipleAsync(IEnumerable<IFormFile> files, string folder = "Img")
         {
-            string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('/'), fileName);
+            var savedFiles = new List<string>();
+            foreach (var file in files)
+            {
+                var result = await FileLoaderAsync(file, folder);
+                if (!string.IsNullOrEmpty(result))
+                    savedFiles.Add(result);
+            }
+            return savedFiles;
+        }
+
+        public static bool FileRemover(string relativePath, string rootFolder = "wwwroot")
+        {
+            if (string.IsNullOrWhiteSpace(relativePath))
+                return false;
+
+            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), rootFolder, relativePath.TrimStart('/'));
 
             if (File.Exists(fullPath))
             {
@@ -39,6 +59,14 @@ namespace Fleama.WebUI.Utils
             }
 
             return false;
+        }
+
+        public static void FileRemoverMultiple(IEnumerable<string> relativePaths, string rootFolder = "wwwroot")
+        {
+            foreach (var file in relativePaths)
+            {
+                FileRemover(file, rootFolder);
+            }
         }
     }
 }

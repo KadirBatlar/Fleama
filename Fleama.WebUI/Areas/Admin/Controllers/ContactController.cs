@@ -1,5 +1,5 @@
 ﻿using Fleama.Core.Entities;
-using Fleama.Data;
+using Fleama.Service.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,20 +9,17 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
     [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class ContactController : Controller
     {
-        private readonly DatabaseContext _context;
+        private readonly IBaseService<Contact> _service;
 
-        public ContactController(DatabaseContext context)
+        public ContactController(IBaseService<Contact> service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // Admin panelinde iletişim formlarını listeleme
         public IActionResult Index()
         {
-            var contacts = _context.Contacts
-                                   .OrderByDescending(x => x.CreatedDate)
-                                   .ToList();
-            return View(contacts);
+            return View(_service);
+
         }
 
         // Detay görüntüleme
@@ -79,6 +76,9 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return RedirectToAction("Contact", "Home");
             }
 
+            var contact = await _service.FindByIdAsync(id.Value);
+             
+
             return RedirectToAction("Contact", "Home");
         }
 
@@ -105,9 +105,9 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(contact);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    _service.Update(contact);
+                    await _service.SaveChangesAsync();
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {

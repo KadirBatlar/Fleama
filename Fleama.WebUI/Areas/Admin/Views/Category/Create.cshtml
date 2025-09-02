@@ -1,4 +1,4 @@
-﻿@model Fleama.Core.Entities.Category
+﻿@model Category
 
 @{
     ViewData["Title"] = "Yeni Kategori Ekle";
@@ -42,7 +42,7 @@
 
     <div class="mb-3">
         <label asp-for="ParentId" class="form-label">Üst Kategori</label>
-        <select asp-for="ParentId" asp-items="ViewBag.Kategoriler" class="form-select">
+        <select asp-for="ParentId" asp-items="ViewBag.Categories" class="form-select">
             <option value="">-- Seçiniz --</option>
         </select>
         <span asp-validation-for="ParentId" class="text-danger"></span>
