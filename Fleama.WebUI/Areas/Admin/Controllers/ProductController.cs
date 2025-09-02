@@ -36,6 +36,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> GetAll()
         {
             var products = await _productService.GetAllAsync();
+
             return Ok(products);
         }
 
@@ -45,7 +46,8 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (products == null)
                 return NotFound("Ürün Bulunamadı.");
 
-            return Ok(products);
+
+            return Ok(product);
         }
 
         public async Task<IActionResult> Detail(int? id)
@@ -67,7 +69,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
             ViewBag.BrandId = new SelectList(brands, "Id", "Name");
             ViewBag.CategoryId = new SelectList(categories, "Id", "Name");
-            
+
             return View();
         }
 
@@ -96,27 +98,26 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             await _productService.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+
         }
 
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var product = await _productService.FindByIdAsync(id.Value);
             if (product == null)
-            {
                 return NotFound();
             }
             ViewBag.Categories = new SelectList(_productService.GetAll(), "Id", "Name");
+
             return View(product);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Edit(int id, Product product, List<IFormFile?> images, bool removeImg = false)
+
         {
             if (id != product.Id)
                 return NotFound();
@@ -178,21 +179,20 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+
         }
 
 
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var product = await _productService.GetAsync(x => x.Id == id);
+
             if (product == null)
-            {
                 return NotFound();
-            }
+
             return View(product);
         }
 
@@ -211,8 +211,10 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                     }
                 }
 
+
                 _productService.Delete(product);
                 await _productService.SaveChangesAsync();
+
             }
 
             return RedirectToAction(nameof(Index));

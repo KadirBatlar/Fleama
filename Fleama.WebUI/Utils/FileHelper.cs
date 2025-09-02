@@ -1,4 +1,6 @@
-﻿namespace Fleama.WebUI.Utils
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Fleama.WebUI.Utils
 {
     public static class FileHelper
     {
@@ -49,11 +51,13 @@
                 return false;
 
             var fullPath = Path.Combine(Directory.GetCurrentDirectory(), rootFolder, relativePath.TrimStart('/'));
+
             if (File.Exists(fullPath))
             {
                 File.Delete(fullPath);
                 return true;
             }
+
             return false;
         }
 

@@ -19,20 +19,79 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         public IActionResult Index()
         {
             return View(_service);
+
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        // Detay görüntüleme
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
+
+            var contact = await _context.Contacts.FirstOrDefaultAsync(x => x.Id == id);
+            if (contact == null)
+                return NotFound();
+
+            return View(contact);
+        }
+
+        // Yeni manuel kayıt oluşturma (Admin paneli için)
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Contact contact)
+        {
+            if (ModelState.IsValid)
+            {
+                contact.UserName ??= "Admin"; // Admin panelinden ekleniyorsa
+                contact.CreatedDate = DateTime.Now;
+                contact.IsActive = true;
+                _context.Add(contact);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(contact);
+        }
+
+        // Kullanıcı tarafı (frontend) üzerinden mesaj gönderme (örneğin: /Home/Contact)
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubmitFromPublic(Contact contact)
+        {
+            if (ModelState.IsValid)
+            {
+                contact.UserName = "Ziyaretçi";
+                contact.CreatedDate = DateTime.Now;
+                contact.IsActive = true;
+                _context.Contacts.Add(contact);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Mesajınız başarıyla gönderildi.";
+                return RedirectToAction("Contact", "Home");
             }
 
             var contact = await _service.FindByIdAsync(id.Value);
-            if (contact == null)
-            {
+             
+
+            return RedirectToAction("Contact", "Home");
+        }
+
+        // Düzenleme (gerekirse kullanılır)
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
                 return NotFound();
-            }
+
+            var contact = await _context.Contacts.FindAsync(id);
+            if (contact == null)
+                return NotFound();
+
             return View(contact);
         }
 
@@ -48,14 +107,42 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 {
                     _service.Update(contact);
                     await _service.SaveChangesAsync();
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     throw;
                 }
-                return RedirectToAction(nameof(Index));
             }
+
             return View(contact);
+        }
+
+        // Silme ekranı
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var contact = await _context.Contacts.FirstOrDefaultAsync(m => m.Id == id);
+            if (contact == null)
+                return NotFound();
+
+            return View(contact);
+        }
+
+        // Silme işlemi (onay sonrası)
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var contact = await _context.Contacts.FindAsync(id);
+            if (contact != null)
+            {
+                _context.Contacts.Remove(contact);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -1,18 +1,17 @@
-﻿@model Fleama.Core.Entities.AppUser
+﻿@model Fleama.Core.Entities.Contact
 
 @{
-    ViewData["Title"] = "Kullanıcı Sil";
+    ViewData["Title"] = "İletişim Formu Sil";
     Layout = "_LayoutAdmin";
 }
 
-<h2><i class="fas fa-trash-alt me-2 text-danger"></i> Kullanıcıyı Sil</h2>
+<h2><i class="fas fa-trash-alt me-2 text-danger"></i> İletişim Formunu Sil</h2>
 
-<div class="alert alert-warning mt-3">
-    <i class="fas fa-exclamation-triangle me-2"></i>
-    Bu kullanıcıyı silmek istediğinizden emin misiniz? 
+<div class="alert alert-warning mt-4">
+    <strong>Uyarı:</strong> Bu iletişim kaydı kalıcı olarak silinecektir. Devam etmek istediğinize emin misiniz?
 </div>
 
-<div class="card shadow-sm">
+<div class="card mt-3 shadow-sm">
     <div class="card-body">
         <dl class="row">
             <dt class="col-sm-3">Ad</dt>
@@ -30,17 +29,23 @@
             <dt class="col-sm-3">Telefon</dt>
             <dd class="col-sm-9">@Model.Phone</dd>
 
-            <dt class="col-sm-3">Yönetici mi?</dt>
+            <dt class="col-sm-3">Mesaj</dt>
+            <dd class="col-sm-9">@Model.Message</dd>
+
+            <dt class="col-sm-3">Durum</dt>
             <dd class="col-sm-9">
-                @if (Model.IsAdmin)
+                @if (Model.IsActive)
                 {
-                    <span class="badge bg-success">Evet</span>
+                    <span class="badge bg-success">Aktif</span>
                 }
                 else
                 {
-                    <span class="badge bg-danger">Hayır</span>
+                    <span class="badge bg-secondary">Pasif</span>
                 }
             </dd>
+
+            <dt class="col-sm-3">Gönderim Tarihi</dt>
+            <dd class="col-sm-9">@Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")</dd>
         </dl>
 
         <form asp-action="Delete" method="post">
