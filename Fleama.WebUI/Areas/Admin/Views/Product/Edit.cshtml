@@ -1,0 +1,106 @@
+﻿@model Fleama.Core.Entities.Product
+@{
+    ViewData["Title"] = "Ürün Düzenle";
+    Layout = "_LayoutAdmin";
+}
+
+<h2><i class="fas fa-edit me-2"></i> Ürün Düzenle</h2>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data" class="row g-3">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="col-md-6">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="ProductCode" class="form-label"></label>
+                <input asp-for="ProductCode" class="form-control" />
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="OrderNo" class="form-label"></label>
+                <input asp-for="OrderNo" class="form-control" />
+            </div>
+
+            <div class="col-md-6 d-flex align-items-center">
+                <div class="form-check mt-3">
+                    <input asp-for="IsHome" class="form-check-input" type="checkbox" />
+                    <label asp-for="IsHome" class="form-check-label">Anasayfada Göster</label>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Marka</label>
+                <select asp-for="BrandId" class="form-select" asp-items="ViewBag.BrandId"></select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Kategori</label>
+                <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Mevcut Görsel</label><br />
+                @if (!string.IsNullOrEmpty(Model.Image))
+                {
+                    <img src="@Url.Content("~/Img/Products/" + Model.Image)" class="img-thumbnail mb-2" style="max-height: 120px;" />
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="removeImg" id="removeImg" />
+                        <label class="form-check-label" for="removeImg">Mevcut görseli kaldır</label>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Yüklü görsel yok.</p>
+                }
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Yeni Görsel Yükle</label>
+                <input type="file" name="image" class="form-control" onchange="previewImage(event)" />
+                <div class="mt-2">
+                    <img id="imagePreview" src="#" alt="Önizleme" style="max-height: 120px; display: none;" />
+                </div>
+            </div>
+
+            <div class="col-12 mt-3">
+                <button type="submit" class="btn btn-outline-success">
+                    <i class="fas fa-save"></i> Kaydet
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">
+                    <i class="fas fa-arrow-left"></i> Geri Dön
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const reader = new FileReader();
+
+            reader.onload = function () {
+                const img = document.getElementById("imagePreview");
+                img.src = reader.result;
+                img.style.display = "block";
+            };
+
+            if (input.files[0]) {
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+
+}

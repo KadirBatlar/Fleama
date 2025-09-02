@@ -42,7 +42,7 @@
             <dd class="col-sm-9">
                 @if (!string.IsNullOrEmpty(Model.Image))
                 {
-                    <img src="~/Img/Categories/@Model.Image" width="80" height="80" style="object-fit:cover; border-radius: 8px;" />
+                    <img src="@Url.Content("~/Img/Categories/" + Model.Image)" width="80" height="80" style="object-fit:cover; border-radius: 8px;" />
                 }
                 else
                 {
@@ -51,14 +51,14 @@
             </dd>
         </dl>
 
-        <form asp-action="DeleteConfirm" method="post">
+        <form asp-action="Delete" method="post">
             <input type="hidden" asp-for="Id" />
 
             <button type="submit" class="btn btn-outline-danger">
                 <i class="fas fa-trash-alt"></i> Sil
             </button>
             <a asp-action="Index" class="btn btn-outline-secondary ms-2">
-                <i class="fas fa-arrow-left"></i> Geri Dön
+                <i class="fas fa-arrow-left"></i> Vazgeç
             </a>
         </form>
     </div>

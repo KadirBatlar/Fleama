@@ -1,0 +1,54 @@
+@model IEnumerable<Fleama.Core.Entities.Product>
+@{
+    ViewData["Title"] = "Ürünler";
+    Layout = "_LayoutAdmin";
+}
+
+<h2><i class="fas fa-box-open me-2"></i> Ürünler</h2>
+
+<a asp-action="Create" class="btn btn-outline-dark mb-3">
+    <i class="fas fa-plus"></i> Yeni Ekle
+</a>
+
+<table class="table table-hover table-bordered text-center align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Ürün Adı</th>
+            <th>Görsel</th>
+            <th>Kategori</th>
+            <th>Marka</th>
+            <th>Anasayfa?</th>
+            <th>Sıra No</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.Image))
+                    {
+                        <img src="@item.Image" width="60" />
+                    }
+                </td>
+                <td>@item.Category?.Name</td>
+                <td>@item.Brand?.Name</td>
+                <td>@(item.IsHome ? "Evet" : "Hayır")</td>
+                <td>@item.OrderNo</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-1">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a asp-action="Detail" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info me-1">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

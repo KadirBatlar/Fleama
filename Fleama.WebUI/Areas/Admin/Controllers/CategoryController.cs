@@ -47,16 +47,9 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (category == null)
                 return NotFound();
 
-            // Üst kategori adı gösterimi
-            if (category.ParentId != null)
-            {
-                var parent = await _context.Categories.FindAsync(category.ParentId);
-                ViewBag.ParentName = parent?.Name ?? "-";
-            }
-            else
-            {
-                ViewBag.ParentName = "-";
-            }
+            ViewBag.ParentName = category.ParentId != null
+                ? (await _context.Categories.FindAsync(category.ParentId))?.Name ?? "-"
+                : "-";
 
             return View(category);
         }
@@ -70,6 +63,8 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Category category, IFormFile? image)
         {
+            category.ParentId = 1;
+
             if (ModelState.IsValid)
             {
                 if (image != null)
@@ -117,7 +112,6 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                     }
                     else
                     {
-                        // Görsel yüklenmedi, silme işaretlenmedi → mevcut görseli koru
                         _context.Entry(category).Property(x => x.Image).IsModified = false;
                     }
 
@@ -145,15 +139,9 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (category == null)
                 return NotFound();
 
-            if (category.ParentId != null)
-            {
-                var parent = await _context.Categories.FindAsync(category.ParentId);
-                ViewBag.ParentName = parent?.Name ?? "-";
-            }
-            else
-            {
-                ViewBag.ParentName = "-";
-            }
+            ViewBag.ParentName = category.ParentId != null
+                ? (await _context.Categories.FindAsync(category.ParentId))?.Name ?? "-"
+                : "-";
 
             return View(category);
         }
@@ -175,5 +163,6 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

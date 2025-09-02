@@ -1,28 +1,43 @@
-﻿namespace Fleama.WebUI.Utils
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Fleama.WebUI.Utils
 {
     public class FileHelper
     {
         public static async Task<string> FileLoaderAsync(IFormFile formFile, string filePath = "/Img/")
         {
             string fileName = "";
-            if(formFile != null && formFile.Length > 0)
+
+            if (formFile != null && formFile.Length > 0)
             {
                 fileName = formFile.FileName.ToLower();
-                string directory = Directory.GetCurrentDirectory() + "/wwwroot" + filePath + fileName;
-                using var stream = new FileStream(directory, FileMode.Create);
+
+                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('/'));
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                string fullPath = Path.Combine(folderPath, fileName);
+
+                using var stream = new FileStream(fullPath, FileMode.Create);
                 await formFile.CopyToAsync(stream);
             }
-            return  fileName;
+
+            return fileName;
         }
 
-        public static bool FileRemover(string fileName, string filePath = "/wwwroot/Img/")
+        public static bool FileRemover(string fileName, string filePath = "/Img/")
         {
-            string directory = Directory.GetCurrentDirectory() + "/wwwroot" + filePath + fileName;
-            if(File.Exists(directory))
+            string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('/'), fileName);
+
+            if (File.Exists(fullPath))
             {
-                File.Delete(directory);
+                File.Delete(fullPath);
                 return true;
             }
+
             return false;
         }
     }

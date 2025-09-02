@@ -26,17 +26,17 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
         public async Task<IActionResult> GetAll()
         {
-            var products = await _context.Set<Product>().ToListAsync();
+            var products = await _context.Products.ToListAsync();
             return Ok(products);
         }
 
         public async Task<IActionResult> GetById(int id)
         {
-            var products = await _context.Set<Product>().FindAsync(id);
-            if (products == null)
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
                 return NotFound();
 
-            return Ok(products);
+            return Ok(product);
         }
 
         public async Task<IActionResult> Detail(int? id)
@@ -56,8 +56,8 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            ViewBag["BrandId"] = new SelectList(_context.Brands, "Id", "Name");
-            ViewBag["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewBag.BrandId = new SelectList(_context.Brands, "Id", "Name");
+            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
 
@@ -73,29 +73,28 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Kategoriler = new SelectList(_context.Products, "Id", "Name");
+
+            ViewBag.BrandId = new SelectList(_context.Brands, "Id", "Name");
+            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name");
             return View(product);
         }
 
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var product = await _context.Products.FindAsync(id);
             if (product == null)
-            {
                 return NotFound();
-            }
-            ViewBag.Kategoriler = new SelectList(_context.Products, "Id", "Name");
+
+            ViewBag.BrandId = new SelectList(_context.Brands, "Id", "Name", product.BrandId);
+            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
             return View(product);
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, Category product, IFormFile? image, bool removeImg = false)
+        public async Task<IActionResult> Edit(int id, Product product, IFormFile? image, bool removeImg = false)
         {
             if (id != product.Id)
                 return NotFound();
@@ -119,22 +118,24 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Kategoriler = new SelectList(_context.Products, "Id", "Name");
+
+            ViewBag.BrandId = new SelectList(_context.Brands, "Id", "Name", product.BrandId);
+            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
             return View(product);
         }
 
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            var product = await _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(x => x.Id == id);
             if (product == null)
-            {
                 return NotFound();
-            }
+
             return View(product);
         }
 
@@ -149,8 +150,8 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                     FileHelper.FileRemover(product.Image, "/Img/Products/");
                 }
                 _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
             }
-            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
