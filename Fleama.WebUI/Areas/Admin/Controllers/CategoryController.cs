@@ -61,6 +61,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 ViewBag.ParentName = "-";
             }
 
+
             return View(category);
         }
 
@@ -75,6 +76,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> Create(Category category, IFormFile? image)
         {
             if (!ModelState.IsValid)
+
             {
                 var categories = _categoryService.GetAll();
                 ViewBag.Categories = new SelectList(categories, "Id", "Name");
@@ -148,6 +150,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                     {
                         // Görsel yüklenmedi, silme işaretlenmedi → mevcut görseli koru
                         _categoryService.UpdateCategoryWithoutModifyingImage(category);
+
                     }
 
                     _categoryService.Update(category);
@@ -184,6 +187,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             {
                 ViewBag.ParentName = "-";
             }
+
 
             return View(category);
         }

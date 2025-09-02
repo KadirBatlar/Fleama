@@ -26,12 +26,14 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> GetAll()
         {
             var news = await _service.GetAllAsync();
+
             return Ok(news);
         }
 
         public async Task<IActionResult> GetById(int id)
         {
             var news = await _service.FindByIdAsync(id);
+
             if (news == null)
                 return NotFound();
 
@@ -61,7 +63,9 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 if (image is not null)
+                {
                     news.Image = await FileHelper.FileLoaderAsync(image, "/Img/News/");
+                }
 
                 _service.Add(news);
                 await _service.SaveChangesAsync();
@@ -93,21 +97,30 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             {
                 try
                 {
-                    if (removeImg)
+                    if (removeImg && !string.IsNullOrEmpty(news.Image))
+                    {
+                        FileHelper.FileRemover(news.Image, "/Img/News/");
                         news.Image = string.Empty;
+                    }
 
                     if (image is not null)
+                    {
                         news.Image = await FileHelper.FileLoaderAsync(image, "/Img/News/");
+                    }
 
                     _service.Update(news);
                     await _service.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
+                    if (!_context.News.Any(e => e.Id == id))
+                        return NotFound();
                     throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(news);
         }
 
