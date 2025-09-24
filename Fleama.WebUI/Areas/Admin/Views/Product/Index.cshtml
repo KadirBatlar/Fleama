@@ -1,4 +1,4 @@
-@model IEnumerable<Fleama.Core.Entities.Product>
+@model IEnumerable<Product>
 @{
     ViewData["Title"] = "Ürünler";
     Layout = "_LayoutAdmin";
@@ -28,10 +28,16 @@
             <tr>
                 <td>@item.Name</td>
                 <td>
-                    @if (!string.IsNullOrEmpty(item.Image))
+                    @if (item.Images?.FirstOrDefault() != null)
                     {
-                        <img src="@item.Image" width="60" />
+                        <img src="@Url.Content("~/Img/Products/" + item.Images.FirstOrDefault().Url)" width="60" />
                     }
+                    else
+                    {
+                        <span class="text-muted">Görsel yok</span>
+                    }
+
+
                 </td>
                 <td>@item.Category?.Name</td>
                 <td>@item.Brand?.Name</td>

@@ -1,4 +1,4 @@
-﻿@model Fleama.Core.Entities.Product
+﻿@model Product
 @{
     ViewData["Title"] = "Ürünü Sil";
     Layout = "_LayoutAdmin";
@@ -24,13 +24,20 @@
     <label class="form-label">Marka</label>
     <p class="form-control-plaintext">@Model.Brand?.Name</p>
 </div>
-
-@if (!string.IsNullOrEmpty(Model.Image))
+@{
+    var firstImage = Model.Images?.FirstOrDefault();
+}
+@if (firstImage != null)
 {
     <div class="mb-3">
         <label class="form-label">Görsel</label><br />
-        <img src="@Model.Image" alt="Ürün Görseli" style="max-height: 200px;" />
+        <img src="@Url.Content("~/Img/Products/" + firstImage.Url)"
+             alt="Ürün Görseli" style="max-height: 200px;" />
     </div>
+}
+else
+{
+    <p class="text-muted">Yüklü görsel yok.</p>
 }
 
 <form asp-action="DeleteConfirm" method="post">

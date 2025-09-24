@@ -1,4 +1,4 @@
-﻿@model Fleama.Core.Entities.Product
+﻿@model Product
 @{
     ViewData["Title"] = "Ürün Detayları";
     Layout = "_LayoutAdmin";
@@ -44,14 +44,17 @@
 
     <div class="col-md-12 mb-3">
         <label class="form-label">Ürün Görseli</label><br />
-        @if (!string.IsNullOrEmpty(Model.Image))
+        @if (Model.Images != null && Model.Images.Any())
         {
-            <img src="@Model.Image" alt="Ürün Görseli" style="max-height: 200px;" />
+            <img src="~/Img/Products/@Model.Images.First().Url"
+                 alt="Ürün Görseli" style="max-height:200px;" />
         }
         else
         {
-            <p class="text-muted">Görsel yok</p>
+            <p class="text-muted">Yüklü görsel yok.</p>
         }
+
+
     </div>
 </div>
 

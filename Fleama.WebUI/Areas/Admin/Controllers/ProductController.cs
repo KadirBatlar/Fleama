@@ -16,27 +16,23 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         private readonly IProductService _productService;
         private readonly IBaseService<Brand> _brandService;
         private readonly IBaseService<Category> _categoryService;
-        private readonly DbContext _dbContext;
 
-
-        public ProductController(IProductService productService, IBaseService<Brand> brandService, IBaseService<Category> categoryService, DbContext dbContext)
+        public ProductController(IProductService productService, IBaseService<Brand> brandService, IBaseService<Category> categoryService)
         {
             _productService = productService;
             _brandService = brandService;
             _categoryService = categoryService;
-            _dbContext = dbContext;
         }
 
         public async Task<IActionResult> Index()
         {
             var productContext = _productService.GetAllWithBrandAndCategoryAsync();
-            return View(await _productService.GetAllAsync());
+            return View(await productContext);
         }
 
         public async Task<IActionResult> GetAll()
         {
             var products = await _productService.GetAllAsync();
-
             return Ok(products);
         }
 
@@ -46,8 +42,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (products == null)
                 return NotFound("Ürün Bulunamadı.");
 
-
-            return Ok(product);
+            return Ok(products);
         }
 
         public async Task<IActionResult> Detail(int? id)
@@ -69,7 +64,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
             ViewBag.BrandId = new SelectList(brands, "Id", "Name");
             ViewBag.CategoryId = new SelectList(categories, "Id", "Name");
-
+            
             return View();
         }
 
@@ -98,26 +93,27 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             await _productService.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
-
         }
 
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
+            {
                 return NotFound();
+            }
 
             var product = await _productService.FindByIdAsync(id.Value);
             if (product == null)
+            {
                 return NotFound();
             }
             ViewBag.Categories = new SelectList(_productService.GetAll(), "Id", "Name");
-
             return View(product);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Edit(int id, Product product, List<IFormFile?> images, bool removeImg = false)
-
         {
             if (id != product.Id)
                 return NotFound();
@@ -130,12 +126,11 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
             try
             {
-                // Eski ürünü db'den çekiyoruz
                 var existingProduct = await _productService.FindByIdAsync(id);
                 if (existingProduct == null)
                     return NotFound();
 
-                // Eğer removeImg seçilmişse eski görselleri silelim
+                // Eğer removeImg seçilmişse eski görselleri sil
                 if (removeImg && existingProduct.Images != null)
                 {
                     foreach (var img in existingProduct.Images)
@@ -145,7 +140,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                     existingProduct.Images.Clear();
                 }
 
-                // Yeni görseller yüklendiyse ekleyelim
+                // Yeni görseller yüklendiyse ekleme
                 if (images != null && images.Any())
                 {
                     var filePaths = await FileHelper.FileLoaderMultipleAsync(images.Where(x => x != null)!, "/Img/Products/");
@@ -165,10 +160,15 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                             existingProduct.Images.Add(img);
                 }
 
-                // Diğer property’leri güncelle
-                _dbContext.Entry(existingProduct).CurrentValues.SetValues(product);
-
-                // ... diğer alanlar varsa onları da set et
+                existingProduct.Brand = product.Brand;
+                existingProduct.BrandId = product.BrandId;
+                existingProduct.OrderNo = product.OrderNo;
+                existingProduct.ProductCode = product.ProductCode;
+                existingProduct.CategoryId = product.CategoryId;
+                existingProduct.Category = product.Category;
+                existingProduct.Description = product.Description;
+                existingProduct.Name = product.Name;
+                existingProduct.IsHome = product.IsHome;               
 
                 _productService.Update(existingProduct);
                 await _productService.SaveChangesAsync();
@@ -179,20 +179,21 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             }
 
             return RedirectToAction(nameof(Index));
-
         }
 
 
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
+            {
                 return NotFound();
+            }
 
             var product = await _productService.GetAsync(x => x.Id == id);
-
             if (product == null)
+            {
                 return NotFound();
-
+            }
             return View(product);
         }
 
@@ -211,10 +212,8 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                     }
                 }
 
-
                 _productService.Delete(product);
                 await _productService.SaveChangesAsync();
-
             }
 
             return RedirectToAction(nameof(Index));

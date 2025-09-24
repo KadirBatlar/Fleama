@@ -16,14 +16,7 @@
         <div class="col-md-4 text-center">
             @if (!string.IsNullOrEmpty(Model.Image))
             {
-                <img src="@Url.Content("~/Img/News/" + Model.Image)"
-                     class="img-fluid rounded"
-                     alt="@Model.Name"
-                     style="max-height: 200px; object-fit: cover;" />
-            }
-            else
-            {
-                <div class="text-muted small fst-italic">Görsel Yok</div>
+                <img src="~/Img/News/@Model.Image" class="img-fluid rounded" alt="@Model.Name" />
             }
         </div>
         <div class="col-md-8">
@@ -33,13 +26,12 @@
     </div>
 </div>
 
-<!-- 🔧 DÜZELTİLMİŞ FORM -->
-<form asp-action="Delete" method="post">
+<form asp-action="DeleteConfirm" method="post">
     <input type="hidden" asp-for="Id" />
     <button type="submit" class="btn btn-danger">
-        <i class="fas fa-trash-alt"></i> Evet
+        <i class="fas fa-trash-alt"></i> Evet, Sil
     </button>
     <a asp-action="Index" class="btn btn-outline-secondary ms-2">
-        <i class="fas fa-arrow-left"></i> Vazgeç
+        <i class="fas fa-arrow-left"></i> Geri Dön
     </a>
 </form>
