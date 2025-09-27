@@ -48,6 +48,12 @@
         <span asp-validation-for="ParentId" class="text-danger"></span>
     </div>
 
+    <div class="col-md-12 mb-3">
+            <label class="form-label">Görsel</label>
+            <input type="file" name="images" class="form-control" multiple onchange="previewImages(event)" />
+            <div id="imagePreviewContainer" class="mt-2 d-flex flex-wrap gap-2"></div>
+    </div>
+
     <button type="submit" class="btn btn-outline-primary">
         <i class="fas fa-save"></i> Kaydet
     </button>
@@ -57,7 +63,26 @@
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script>        
+        function previewImages(event) {
+            const input = event.target;
+            const container = document.getElementById("imagePreviewContainer");
+            container.innerHTML = "";
+
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.style.maxHeight = "120px";
+                        img.style.border = "1px solid #ccc";
+                        img.style.padding = "2px";
+                        container.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+    </script>
 }

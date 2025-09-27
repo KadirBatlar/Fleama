@@ -11,7 +11,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
     [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class ImageController : Controller
     {
-        private readonly DatabaseContext _context;
+        /*private readonly DatabaseContext _context;
 
         public ImageController(DatabaseContext context)
         {
@@ -153,6 +153,6 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             }
 
             return RedirectToAction(nameof(Index));
-        }
+        }*/
     }
 }

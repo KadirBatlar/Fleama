@@ -6,8 +6,8 @@
 
 <h2><i class="fas fa-box-open me-2"></i> Ürünler</h2>
 
-<a asp-action="Create" class="btn btn-outline-dark mb-3">
-    <i class="fas fa-plus"></i> Yeni Ekle
+<a asp-action="Create" class="btn btn-outline-success mb-3">
+    <i class="fas fa-plus me-1"></i> Yeni Ekle
 </a>
 
 <table class="table table-hover table-bordered text-center align-middle">
@@ -23,37 +23,53 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>
+                        @if (item.Images?.FirstOrDefault() != null)
+                        {
+                            <img src="@item.Images.First().Url" width="60" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">Görsel yok</span>
+                        }
+                    </td>
+                    <td>@item.Category?.Name</td>
+                    <td>@item.Brand?.Name</td>
+                    <td>
+                        @if (item.IsHome)
+                        {
+                            <span class="badge bg-success">Evet</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Hayır</span>
+                        }
+                    </td>
+                    <td>@item.OrderNo</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a asp-action="Detail" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info me-1">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@item.Name</td>
-                <td>
-                    @if (item.Images?.FirstOrDefault() != null)
-                    {
-                        <img src="@Url.Content("~/Img/Products/" + item.Images.FirstOrDefault().Url)" width="60" />
-                    }
-                    else
-                    {
-                        <span class="text-muted">Görsel yok</span>
-                    }
-
-
-                </td>
-                <td>@item.Category?.Name</td>
-                <td>@item.Brand?.Name</td>
-                <td>@(item.IsHome ? "Evet" : "Hayır")</td>
-                <td>@item.OrderNo</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-1">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <a asp-action="Detail" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info me-1">
-                        <i class="fas fa-eye"></i>
-                    </a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
-                        <i class="fas fa-trash-alt"></i>
-                    </a>
-                </td>
+                <td colspan="7" class="text-center text-muted">Hiç ürün bulunamadı.</td>
             </tr>
         }
     </tbody>

@@ -1,8 +1,8 @@
 ﻿using Fleama.Core.Entities;
 using Fleama.Core.Enums;
-using Fleama.Data;
 using Fleama.Service.Abstract;
 using Fleama.Service.Concrete;
+using Fleama.Shared.Dtos;
 using Fleama.WebUI.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,18 +23,18 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _categoryService.GetAllAsync());
+            return View(await _categoryService.GetAllCategoriesAsync());
         }
 
         public async Task<IActionResult> GetAll()
         {
-            var categories = await _categoryService.GetAllAsync();
+            var categories = await _categoryService.GetAllCategoriesAsync();
             return Ok(categories);
         }
 
         public async Task<IActionResult> GetById(int id)
         {
-            var category = await _categoryService.FindByIdAsync(id);
+            var category = await _categoryService.GetCategoryByIdAsync(id);
             if (category == null)
                 return NotFound();
 
@@ -46,14 +46,14 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (id == null)
                 return NotFound();
 
-            var category = await _categoryService.GetAsync(x => x.Id == id);
+            var category = await _categoryService.GetCategoryByIdAsync(id.Value);
             if (category == null)
                 return NotFound();
 
             // Show parent category name
             if (category.ParentId != null)
             {
-                var parent = await _categoryService.FindByIdAsync(category.ParentId.Value);
+                var parent = await _categoryService.GetCategoryByIdAsync(category.ParentId.Value);
                 ViewBag.ParentName = parent?.Name ?? "-";
             }
             else
@@ -81,22 +81,13 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return View(category);
             }
 
-            if (image != null && image.Length > 0)
+            var fileDto = new FileDto();
+            if (image != null)
             {
-                var savedPath = await FileHelper.FileLoaderAsync(image, "/Img/Categories");
-                if (!string.IsNullOrEmpty(savedPath))
-                {
-                    category.Image = new Image
-                    {
-                        Url = savedPath,
-                        ReferenceId = category.Id,
-                        ImageType = ImageType.Category, 
-                    };
-                }
+                fileDto = await FileMapper.ToFileDtoAsync(image!);
             }
 
-            await _categoryService.AddAsync(category);
-            await _categoryService.SaveChangesAsync();
+            await _categoryService.CreateCategoryAsync(category, fileDto);
 
             return RedirectToAction(nameof(Index));
         }
@@ -108,12 +99,11 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (id == null)
                 return NotFound();
 
-            var category = await _categoryService.FindByIdAsync(id.Value);
+            var category = await _categoryService.GetCategoryByIdAsync(id.Value);
             if (category == null)
                 return NotFound();
 
-            var categories = _categoryService.GetAll();
-            ViewBag.Categories = new SelectList(categories, "Id", "Name");
+            ViewBag.Categories = new SelectList(_categoryService.GetAll(), "Id", "Name");
             return View(category);
         }
 
@@ -125,53 +115,27 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var fileDto = new FileDto();
+                if (image != null)
                 {
-                    if (image != null)
-                    {
-                        var savedPath = await FileHelper.FileLoaderAsync(image, "/Img/Categories/");
-                        if (!string.IsNullOrEmpty(savedPath))
-                        {
-                            category.Image = new Image
-                            {
-                                Url = savedPath,
-                                ReferenceId = category.Id,
-                                ImageType = ImageType.Category,
-                            };
-                        }
-                    }
-                    else if (removeImg)
-                    {
-                        category.Image = null;
-                    }
-                    else
-                    {
-                        // Görsel yüklenmedi, silme işaretlenmedi → mevcut görseli koru
-                        _categoryService.UpdateCategoryWithoutModifyingImage(category);
-                    }
-
-                    _categoryService.Update(category);
-                    await _categoryService.SaveChangesAsync();
+                    fileDto = await FileMapper.ToFileDtoAsync(image!);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-
+                var result = await _categoryService.EditCategoryAsync(id, category, fileDto, removeImg);
+                if (result == null)
+                    return NotFound();
                 return RedirectToAction(nameof(Index));
             }
 
-            var categories = _categoryService.GetAll();
-            ViewBag.Categories = new SelectList(categories, "Id", "Name");            
+            ViewBag.Categories = new SelectList(_categoryService.GetAll(), "Id", "Name");            
             return View(category);
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
                 return NotFound();
 
-            var category = await _categoryService.GetAsync(x => x.Id == id);
+            var category = await _categoryService.GetCategoryByIdAsync(id);
             if (category == null)
                 return NotFound();
 
@@ -191,18 +155,9 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirm(int id)
         {
-            var category = await _categoryService.FindByIdAsync(id);
-
-            if (category != null)
-            {
-                if (category.Image != null && !string.IsNullOrEmpty(category.Image.Url))
-                {
-                    FileHelper.FileRemover(category.Image.Url, "/Img/Categories/");
-                }
-
-                _categoryService.Delete(category);
-                await _categoryService.SaveChangesAsync();
-            }
+            var success = await _categoryService.DeleteCategoryAsync(id);
+            if (!success) 
+                return NotFound();
 
             return RedirectToAction(nameof(Index));
         }

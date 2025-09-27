@@ -41,23 +41,22 @@
 
             <div class="col-md-6">
                 <label class="form-label">Marka</label>
-                <select asp-for="BrandId" class="form-select" asp-items="ViewBag.BrandId"></select>
+                <select asp-for="BrandId" class="form-select" asp-items="ViewBag.Brands"></select>
             </div>
 
             <div class="col-md-6">
                 <label class="form-label">Kategori</label>
-                <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
+                <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories"></select>
             </div>
 
             <div class="col-md-6">
-                <label class="form-label">Mevcut Görsel</label><br />
+                <label class="form-label">Mevcut Görseller</label><br />
                 @if (Model.Images != null && Model.Images.Any())
                 {
                     foreach (var img in Model.Images)
                     {
                         <div class="mb-2">
-                            <img src="@Url.Content("~/Img/Products/" + img.Url)"
-                                 class="img-thumbnail" style="max-height: 120px;" />
+                            <img src="@img.Url" class="img-thumbnail" style="max-height: 120px;" />
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" name="removeImgIds" value="@img.Id" />
                                 <label class="form-check-label">Bu görseli kaldır</label>
@@ -69,23 +68,20 @@
                 {
                     <p class="text-muted">Yüklü görsel yok.</p>
                 }
-
             </div>
 
             <div class="col-md-6">
-                <label class="form-label">Yeni Görsel Yükle</label>
-                <input type="file" name="image" class="form-control" onchange="previewImage(event)" />
-                <div class="mt-2">
-                    <img id="imagePreview" src="#" alt="Önizleme" style="max-height: 120px; display: none;" />
-                </div>
+                <label class="form-label">Yeni Görseller Yükle</label>
+                <input type="file" name="images" class="form-control" multiple onchange="previewImages(event)" />
+                <div id="imagePreviewContainer" class="mt-2 d-flex flex-wrap gap-2"></div>
             </div>
 
             <div class="col-12 mt-3">
                 <button type="submit" class="btn btn-outline-success">
-                    <i class="fas fa-save"></i> Kaydet
+                    <i class="fas fa-save me-1"></i> Kaydet
                 </button>
                 <a asp-action="Index" class="btn btn-outline-secondary ms-2">
-                    <i class="fas fa-arrow-left"></i> Geri Dön
+                    <i class="fas fa-arrow-left me-1"></i> Geri Dön
                 </a>
             </div>
         </form>
@@ -94,20 +90,25 @@
 
 @section Scripts {
     <script>
-        function previewImage(event) {
+        function previewImages(event) {
             const input = event.target;
-            const reader = new FileReader();
+            const container = document.getElementById("imagePreviewContainer");
+            container.innerHTML = "";
 
-            reader.onload = function () {
-                const img = document.getElementById("imagePreview");
-                img.src = reader.result;
-                img.style.display = "block";
-            };
-
-            if (input.files[0]) {
-                reader.readAsDataURL(input.files[0]);
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.style.maxHeight = "120px";
+                        img.style.border = "1px solid #ccc";
+                        img.style.padding = "2px";
+                        container.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                });
             }
         }
     </script>
-
 }

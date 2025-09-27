@@ -12,8 +12,8 @@ namespace Fleama.Core.Entities
 
         public int? ImageId { get; set; }
         
-        [Display(Name = "Görseller")]
-        public Image Image { get; set; }
+        [Display(Name = "Görsel")]
+        public Image? Image { get; set; }
 
         [Display(Name = "Üst Menüde Gösterilsin mi?")]
         public bool IsTopMenu { get; set; }

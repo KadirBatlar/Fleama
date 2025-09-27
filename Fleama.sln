@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fleama.Data", "Fleama.Data\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fleama.Service", "Fleama.Service\Fleama.Service.csproj", "{4189F787-EF5D-4E0B-BCFD-90C2C55200A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fleama.Shared", "Fleama.Shared\Fleama.Shared.csproj", "{91E84B2E-59BF-4463-9EA8-2DD30516D1C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,8 +35,15 @@ Global
 		{4189F787-EF5D-4E0B-BCFD-90C2C55200A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4189F787-EF5D-4E0B-BCFD-90C2C55200A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4189F787-EF5D-4E0B-BCFD-90C2C55200A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91E84B2E-59BF-4463-9EA8-2DD30516D1C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91E84B2E-59BF-4463-9EA8-2DD30516D1C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91E84B2E-59BF-4463-9EA8-2DD30516D1C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91E84B2E-59BF-4463-9EA8-2DD30516D1C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {884E3A91-B2C9-4AED-96BF-01B6DAA82513}
 	EndGlobalSection
 EndGlobal

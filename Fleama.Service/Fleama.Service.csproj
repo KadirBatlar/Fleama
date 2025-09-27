@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Fleama.Data\Fleama.Data.csproj" />
+    <ProjectReference Include="..\Fleama.Shared\Fleama.Shared.csproj" />
   </ItemGroup>
 
 </Project>

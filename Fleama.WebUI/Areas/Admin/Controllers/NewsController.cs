@@ -10,7 +10,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
     [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class NewsController : Controller
     {
-        private readonly IBaseService<News> _service;
+        /*private readonly IBaseService<News> _service;
 
         public NewsController(IBaseService<News> service)
         {
@@ -61,7 +61,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 if (image is not null)
-                    news.Image = await FileHelper.FileLoaderAsync(image, "/Img/News/");
+                    //news.Image = await FileHelper.FileLoaderAsync(image, "/Img/News/");
 
                 _service.Add(news);
                 await _service.SaveChangesAsync();
@@ -139,6 +139,6 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             }
 
             return RedirectToAction(nameof(Index));
-        }
+        }*/
     }
 }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Fleama.Core.Entities.Category>
+﻿@model IEnumerable<Category>
 
 @{
     ViewData["Title"] = "Kategoriler";
@@ -30,12 +30,13 @@
                 <td>@item.Name</td>
                 <td>@item.Description</td>
                 <td>
-                    @if (item.Image != null && !string.IsNullOrEmpty(item.Image.Url))
+                    @if (item.Image != null)
                     {
-                        <img src="~/@item.Image.Url"
-                             alt="@item.Name"
-                             class="img-thumbnail"
-                             style="width: 50px; height: 50px; object-fit: cover;" />
+                        <img src="@item.Image.Url" width="60" />
+                    }
+                    else
+                    {
+                        <span class="text-muted">Görsel yok</span>
                     }
                 </td>
                 <td>

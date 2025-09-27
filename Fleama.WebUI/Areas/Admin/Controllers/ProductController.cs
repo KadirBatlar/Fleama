@@ -1,12 +1,10 @@
 ﻿using Fleama.Core.Entities;
-using Fleama.Core.Enums;
-using Fleama.Data;
 using Fleama.Service.Abstract;
+using Fleama.Shared.Dtos;
 using Fleama.WebUI.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace Fleama.WebUI.Areas.Admin.Controllers
 {
@@ -26,7 +24,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var productContext = _productService.GetAllWithBrandAndCategoryAsync();
+            var productContext = _productService.GetAllProductsAsync();
             return View(await productContext);
         }
 
@@ -50,7 +48,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             if (id == null)
                 return NotFound();
 
-            var product = await _productService.GetByIdWithBrandAndCategoryAsync(id.Value);
+            var product = await _productService.GetProductByIdAsync(id.Value);
             if (product == null)
                 return NotFound();
 
@@ -77,20 +75,14 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return View(product);
             }
 
-            if (images != null && images.Any())
+            var fileDtos = new List<FileDto>();
+            if (images != null)
             {
-                var filePaths = await FileHelper.FileLoaderMultipleAsync(images.Where(x => x != null)!, "/Img/Products/");
-
-                product.Images = filePaths.Select(path => new Image
-                {
-                    Url = path,
-                    ReferenceId = product.Id,   // ürünle ilişki kurulacak
-                    ImageType = ImageType.Product // senin enum tipin
-                }).ToList();
+                foreach (var img in images.Where(x => x != null))
+                    fileDtos.Add(await FileMapper.ToFileDtoAsync(img!));
             }
 
-            await _productService.AddAsync(product);
-            await _productService.SaveChangesAsync();
+            await _productService.CreateProductAsync(product, fileDtos);
 
             return RedirectToAction(nameof(Index));
         }
@@ -102,94 +94,57 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var product = await _productService.FindByIdAsync(id.Value);
+            var product = await _productService.GetProductByIdAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
             }
-            ViewBag.Categories = new SelectList(_productService.GetAll(), "Id", "Name");
+            
+            var brands = _brandService.GetAll();
+            var categories = _categoryService.GetAll();
+
+            ViewBag.Brands = new SelectList(brands, "Id", "Name");            
+            ViewBag.Categories = new SelectList(categories, "Id", "Name");
             return View(product);
         }
 
 
+        
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, Product product, List<IFormFile?> images, bool removeImg = false)
+        public async Task<IActionResult> Edit(int id, Product product, List<IFormFile?> images, List<int>? removeImgIds)
         {
             if (id != product.Id)
                 return NotFound();
 
             if (!ModelState.IsValid)
             {
-                ViewBag.Categories = new SelectList(_productService.GetAll(), "Id", "Name");
+                ViewBag.Categories = new SelectList(_categoryService.GetAll(), "Id", "Name");
+                ViewBag.Brands = new SelectList(_brandService.GetAll(), "Id", "Name");
                 return View(product);
             }
 
-            try
+            var fileDtos = new List<FileDto>();
+            if (images != null)
             {
-                var existingProduct = await _productService.FindByIdAsync(id);
-                if (existingProduct == null)
-                    return NotFound();
-
-                // Eğer removeImg seçilmişse eski görselleri sil
-                if (removeImg && existingProduct.Images != null)
-                {
-                    foreach (var img in existingProduct.Images)
-                    {
-                        FileHelper.FileRemover(img.Url, "/Img/Products/");
-                    }
-                    existingProduct.Images.Clear();
-                }
-
-                // Yeni görseller yüklendiyse ekleme
-                if (images != null && images.Any())
-                {
-                    var filePaths = await FileHelper.FileLoaderMultipleAsync(images.Where(x => x != null)!, "/Img/Products/");
-
-                    var newImages = filePaths.Select(path => new Image
-                    {
-                        Url = path,
-                        ReferenceId = product.Id,
-                        ImageType = ImageType.Product
-                    }).ToList();
-
-                    // var olanlara ekleme
-                    if (existingProduct.Images == null)
-                        existingProduct.Images = newImages;
-                    else
-                        foreach (var img in newImages)
-                            existingProduct.Images.Add(img);
-                }
-
-                existingProduct.Brand = product.Brand;
-                existingProduct.BrandId = product.BrandId;
-                existingProduct.OrderNo = product.OrderNo;
-                existingProduct.ProductCode = product.ProductCode;
-                existingProduct.CategoryId = product.CategoryId;
-                existingProduct.Category = product.Category;
-                existingProduct.Description = product.Description;
-                existingProduct.Name = product.Name;
-                existingProduct.IsHome = product.IsHome;               
-
-                _productService.Update(existingProduct);
-                await _productService.SaveChangesAsync();
+                foreach (var img in images.Where(x => x != null))
+                    fileDtos.Add(await FileMapper.ToFileDtoAsync(img!));
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
+
+            var result = await _productService.EditProductAsync(id, product, fileDtos, removeImgIds);
+            if (result == null)
+                return NotFound();
 
             return RedirectToAction(nameof(Index));
         }
 
-
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var product = await _productService.GetAsync(x => x.Id == id);
+            var product = await _productService.GetProductByIdAsync(id);
             if (product == null)
             {
                 return NotFound();
@@ -200,21 +155,9 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirm(int id)
         {
-            var product = await _productService.FindByIdAsync(id);
-            if (product != null)
-            {
-                // Ürüne ait resimler varsa hepsini sil
-                if (product.Images != null && product.Images.Any())
-                {
-                    foreach (var image in product.Images)
-                    {
-                        FileHelper.FileRemover(image.Url); // Url property’sini kullan
-                    }
-                }
-
-                _productService.Delete(product);
-                await _productService.SaveChangesAsync();
-            }
+            var success = await _productService.DeleteProductAsync(id);
+            if (!success)
+                return NotFound();
 
             return RedirectToAction(nameof(Index));
         }

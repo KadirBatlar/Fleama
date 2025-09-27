@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Fleama.Service\Fleama.Service.csproj" />
+    <ProjectReference Include="..\Fleama.Shared\Fleama.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

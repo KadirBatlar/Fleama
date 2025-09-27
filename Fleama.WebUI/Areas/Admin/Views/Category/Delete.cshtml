@@ -1,5 +1,4 @@
 ﻿@model Category
-
 @{
     ViewData["Title"] = "Kategori Sil";
     Layout = "_LayoutAdmin";
@@ -42,13 +41,12 @@
             <dd class="col-sm-9">
                 @if (Model.Image != null && !string.IsNullOrEmpty(Model.Image.Url))
                 {
-                    <img src="~/@Model.Image.Url" width="80" height="80" style="object-fit:cover; border-radius: 8px;" />
+                    <img src="@Model.Image.Url" width="80" height="80" style="object-fit:cover; border-radius: 8px;" />
                 }
                 else
                 {
                     <span class="text-muted">Yok</span>
                 }
-
             </dd>
         </dl>
 

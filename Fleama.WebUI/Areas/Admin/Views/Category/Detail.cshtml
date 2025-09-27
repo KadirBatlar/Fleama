@@ -1,4 +1,4 @@
-﻿@model Fleama.Core.Entities.Category
+﻿@model Category
 
 @{
     ViewData["Title"] = "Kategori Detayı";
@@ -40,7 +40,7 @@
             <dd class="col-sm-9">
                 @if (Model.Image != null && !string.IsNullOrEmpty(Model.Image.Url))
                 {
-                    <img src="~/@Model.Image.Url" width="80" height="80" style="object-fit:cover; border-radius: 8px;" />
+                    <img src="@Model.Image.Url" width="80" height="80" style="object-fit:cover; border-radius: 8px;" />
                 }
                 else
                 {

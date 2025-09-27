@@ -1,4 +1,4 @@
-﻿@model Fleama.Core.Entities.Product
+﻿@model Product
 @{
     ViewData["Title"] = "Yeni Ürün Ekle";
     Layout = "_LayoutAdmin";
@@ -8,6 +8,7 @@
 
 <form asp-action="Create" method="post" enctype="multipart/form-data">
     <div class="row">
+
         <div class="col-md-6 mb-3">
             <label asp-for="Name" class="form-label"></label>
             <input asp-for="Name" class="form-control" />
@@ -44,34 +45,39 @@
             <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
         </div>
 
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Ürün Görseli</label>
-            <input type="file" name="image" class="form-control" onchange="previewImage(event)" />
-            <div class="mt-2">
-                <img id="imagePreview" src="#" alt="Önizleme" style="max-height: 120px; display: none;" />
-            </div>
+        <div class="col-md-12 mb-3">
+            <label class="form-label">Ürün Görselleri</label>
+            <input type="file" name="images" class="form-control" multiple onchange="previewImages(event)" />
+            <div id="imagePreviewContainer" class="mt-2 d-flex flex-wrap gap-2"></div>
         </div>
+
     </div>
 
     <button type="submit" class="btn btn-outline-success">
-        <i class="fas fa-save"></i> Kaydet
+        <i class="fas fa-save me-1"></i> Kaydet
     </button>
 </form>
 
 @section Scripts {
-    <script>
-        function previewImage(event) {
+    <script>        
+        function previewImages(event) {
             const input = event.target;
-            const reader = new FileReader();
+            const container = document.getElementById("imagePreviewContainer");
+            container.innerHTML = "";
 
-            reader.onload = function () {
-                const img = document.getElementById("imagePreview");
-                img.src = reader.result;
-                img.style.display = "block";
-            };
-
-            if (input.files[0]) {
-                reader.readAsDataURL(input.files[0]);
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.style.maxHeight = "120px";
+                        img.style.border = "1px solid #ccc";
+                        img.style.padding = "2px";
+                        container.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                });
             }
         }
     </script>
