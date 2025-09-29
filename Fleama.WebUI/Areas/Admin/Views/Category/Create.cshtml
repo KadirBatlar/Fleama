@@ -34,10 +34,6 @@
                 <label class="form-check-label" for="IsTopMenu">Evet</label>
             </div>
         </div>
-        <div class="col-md-4">
-            <label for="image" class="form-label">Kategori Görseli</label>
-            <input type="file" name="image" class="form-control" />
-        </div>
     </div>
 
     <div class="mb-3">
@@ -50,7 +46,7 @@
 
     <div class="col-md-12 mb-3">
             <label class="form-label">Görsel</label>
-            <input type="file" name="images" class="form-control" multiple onchange="previewImages(event)" />
+            <input type="file" name="image" class="form-control" onchange="previewImages(event)" />
             <div id="imagePreviewContainer" class="mt-2 d-flex flex-wrap gap-2"></div>
     </div>
 

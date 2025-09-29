@@ -1,13 +1,10 @@
 ﻿using Fleama.Core.Entities;
-using Fleama.Core.Enums;
 using Fleama.Service.Abstract;
-using Fleama.Service.Concrete;
 using Fleama.Shared.Dtos;
 using Fleama.WebUI.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace Fleama.WebUI.Areas.Admin.Controllers
 {
@@ -108,7 +105,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, Category category, IFormFile? image, bool removeImg = false)
+        public async Task<IActionResult> Edit(int id, Category category, IFormFile? image, bool removeImg)
         {
             if (id != category.Id)
                 return NotFound();

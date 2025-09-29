@@ -5,7 +5,6 @@ using Fleama.Service.Abstract;
 using Fleama.Shared.Dtos;
 using Fleama.Shared.Utils;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Packaging;
 
 namespace Fleama.Service.Concrete
 {
@@ -55,7 +54,7 @@ namespace Fleama.Service.Concrete
 
             return category;
         }
-        public async Task<Category?> EditCategoryAsync(int id, Category updatedCategory, FileDto newImage, bool removeImg)
+        public async Task<Category?> EditCategoryAsync(int id, Category updatedCategory, FileDto newImage, bool? removeImg)
         {
             var existingCategory = await GetCategoryByIdAsync(id);
 
@@ -68,7 +67,7 @@ namespace Fleama.Service.Concrete
                 _context.Images.Remove(existingCategory.Image);
             }
 
-            if (newImage != null)
+            if (newImage != null && newImage.Content.Length > 0)
             {
                 var path = FileHelper.SaveFile(newImage, "Categories");
                 var imageEntities = new Image
