@@ -13,8 +13,7 @@ namespace Fleama.Data.Configurations
                    .HasMaxLength(150);
 
             builder.HasMany(p => p.Images)
-                   .WithOne() 
-                   .HasForeignKey(i => i.ReferenceId)
+                   .WithOne()
                    .OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(x => x.ProductCode)

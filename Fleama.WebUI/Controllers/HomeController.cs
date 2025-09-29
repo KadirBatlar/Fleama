@@ -8,17 +8,16 @@ namespace Fleama.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IBaseService<Product> _productService;
-        private readonly IBaseService<News> _newsService;
+        private readonly IProductService _productService;
+        private readonly INewsService _newsService;
         private readonly IBaseService<Contact> _contactService;
 
-        public HomeController(IBaseService<Product> productService, IBaseService<News> newsService, IBaseService<Contact> contactService)
+        public HomeController(IProductService productService, INewsService newsService, IBaseService<Contact> contactService)
         {
             _productService = productService;
             _newsService = newsService;
             _contactService = contactService;
         }
-
         public async Task<IActionResult> Index()
         {
             var model = new HomePageViewModel()

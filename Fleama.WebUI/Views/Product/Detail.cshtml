@@ -17,7 +17,7 @@
                             {
                                 var image = Model.Product.Images[i];
                                 <div class="carousel-item @(i == 0 ? "active" : "")">
-                                    <img class="d-block w-100" src="~/@image.Url" alt="@Model.Product.Name" style="object-fit:cover; height:400px;" />
+                                    <img class="d-block w-100" src="@image.Url" alt="@Model.Product.Name" style="object-fit:cover; height:400px;" />
                                 </div>
                             }
                         </div>

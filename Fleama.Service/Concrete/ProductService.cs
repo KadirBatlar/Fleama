@@ -6,6 +6,7 @@ using Fleama.Shared.Dtos;
 using Fleama.Shared.Utils;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Packaging;
+using System.Linq.Expressions;
 
 namespace Fleama.Service.Concrete
 {
@@ -17,6 +18,7 @@ namespace Fleama.Service.Concrete
 
         public async Task<Product> CreateProductAsync(Product product, List<FileDto> imageFiles)
         {
+            product.IsActive = true;
             _context.Products.Add(product);
             await _context.SaveChangesAsync(); // product.Id oluşur
 
@@ -132,7 +134,13 @@ namespace Fleama.Service.Concrete
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-
+        public override async Task<List<Product>> GetAllAsync(Expression<Func<Product, bool>> filter)
+        {
+            return await _context.Products
+                                 .Where(filter)
+                                 .Include(p => p.Images)
+                                 .ToListAsync();
+        }
 
     }
 }

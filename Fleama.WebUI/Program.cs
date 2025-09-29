@@ -28,6 +28,7 @@ services.AddDbContext<DatabaseContext>(options  =>
 services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
 services.AddScoped<ICategoryService, CategoryService>();
 services.AddScoped<IProductService, ProductService>();
+services.AddScoped<INewsService, NewsService>();
 
 services.AddHttpContextAccessor();
 

@@ -12,8 +12,9 @@ namespace Fleama.Data.Configurations
                    .IsRequired()
                    .HasMaxLength(250);
 
-            builder.Property(x => x.Image)
-                   .HasMaxLength(100);
+            builder.HasOne(c => c.Image)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

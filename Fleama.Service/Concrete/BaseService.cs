@@ -62,7 +62,7 @@ namespace Fleama.Service.Concrete
             return await _dbSet.AsNoTracking().ToListAsync();
         }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> expression)
+        public virtual async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> expression)
         {
             return await _dbSet.Where(expression).AsNoTracking().ToListAsync();
         }

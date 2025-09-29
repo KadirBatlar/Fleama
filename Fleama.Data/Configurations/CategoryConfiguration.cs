@@ -14,7 +14,6 @@ namespace Fleama.Data.Configurations
 
             builder.HasOne(c => c.Image)
                    .WithMany()
-                   .HasForeignKey(c => c.ImageId)
                    .OnDelete(DeleteBehavior.Restrict); 
         }
     }
