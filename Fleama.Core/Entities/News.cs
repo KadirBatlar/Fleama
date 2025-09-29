@@ -10,7 +10,9 @@ namespace Fleama.Core.Entities
         [Display(Name = "Açıklama")]
         public string? Description { get; set; }
 
+        public int? ImageId { get; set; }
+
         [Display(Name = "Görsel")]
-        public string? Image { get; set; }
+        public Image? Image { get; set; }
     }
 }

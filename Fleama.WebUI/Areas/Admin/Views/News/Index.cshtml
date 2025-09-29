@@ -27,13 +27,13 @@
             {
                 <tr>
                     <td>
-                        @if (!string.IsNullOrEmpty(item.Image))
+                        @if (item.Image != null)
                         {
-                            <img src="~/Img/News/@item.Image" width="60" height="60" style="object-fit: cover; border-radius: 6px;" />
+                            <img src="@item.Image.Url" width="60" />
                         }
                         else
                         {
-                            <div class="text-muted small fst-italic">Yok</div>
+                            <span class="text-muted">Görsel yok</span>
                         }
                     </td>
                     <td class="fw-semibold">@item.Name</td>

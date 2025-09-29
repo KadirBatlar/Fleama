@@ -4,6 +4,7 @@
     {
         None = 0,
         Product = 1,
-        Category = 2
+        Category = 2,
+        News = 3
     }
 }

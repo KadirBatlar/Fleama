@@ -14,9 +14,13 @@
 <div class="card shadow-sm mb-4">
     <div class="card-body row">
         <div class="col-md-4 text-center">
-            @if (!string.IsNullOrEmpty(Model.Image))
+            @if (Model.Image != null && !string.IsNullOrEmpty(Model.Image.Url))
             {
-                <img src="~/Img/News/@Model.Image" class="img-fluid rounded" alt="@Model.Name" />
+                <img src="@Model.Image.Url" width="80" height="80" style="object-fit:cover; border-radius: 8px;" />
+            }
+            else
+            {
+                <span class="text-muted">Görsel Yok</span>
             }
         </div>
         <div class="col-md-8">

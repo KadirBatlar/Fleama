@@ -1,49 +1,49 @@
 ﻿using Fleama.Core.Entities;
 using Fleama.Service.Abstract;
+using Fleama.Service.Concrete;
+using Fleama.Shared.Dtos;
 using Fleama.WebUI.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Fleama.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin"), Authorize(Policy = "AdminPolicy")]
     public class NewsController : Controller
     {
-        /*private readonly IBaseService<News> _service;
+        private readonly INewsService _newsService;
 
-        public NewsController(IBaseService<News> service)
+        public NewsController(INewsService newsService)
         {
-            _service = service;
+            _newsService = newsService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var newsList = await _service.GetAllAsync();
-            return View(newsList ?? new List<News>());
+            return View(await _newsService.GetAllNewsAsync());
         }
 
         public async Task<IActionResult> GetAll()
         {
-            var news = await _service.GetAllAsync();
+            var news = await _newsService.GetAllNewsAsync();
             return Ok(news);
         }
 
         public async Task<IActionResult> GetById(int id)
         {
-            var news = await _service.FindByIdAsync(id);
+            var news = await _newsService.GetNewsByIdAsync(id);
             if (news == null)
                 return NotFound();
 
             return Ok(news);
         }
 
-        public async Task<IActionResult> Detail(int? id)
+        public async Task<IActionResult> Detail(int id)
         {
             if (id == null)
                 return NotFound();
 
-            var news = await _service.GetAsync(x => x.Id == id);
+            var news = await _newsService.GetNewsByIdAsync(id);
             if (news == null)
                 return NotFound();
 
@@ -58,25 +58,25 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(News news, IFormFile? image)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (image is not null)
-                    //news.Image = await FileHelper.FileLoaderAsync(image, "/Img/News/");
-
-                _service.Add(news);
-                await _service.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View();                
             }
-
-            return View(news);
+            var fileDto = new FileDto();
+            if (image != null)
+            {
+                fileDto = await FileMapper.ToFileDtoAsync(image!);
+            }
+            await _newsService.CreateNewsAsync(news, fileDto);
+            return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
                 return NotFound();
 
-            var news = await _service.FindByIdAsync(id.Value);
+            var news = await _newsService.GetNewsByIdAsync(id);
             if (news == null)
                 return NotFound();
 
@@ -84,39 +84,32 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, News news, IFormFile? image, bool removeImg = false)
+        public async Task<IActionResult> Edit(int id, News news, IFormFile? image, bool removeImg)
         {
             if (id != news.Id)
                 return NotFound();
 
             if (ModelState.IsValid)
             {
-                try
+                var fileDto = new FileDto();
+                if (image != null)
                 {
-                    if (removeImg)
-                        news.Image = string.Empty;
-
-                    if (image is not null)
-                        news.Image = await FileHelper.FileLoaderAsync(image, "/Img/News/");
-
-                    _service.Update(news);
-                    await _service.SaveChangesAsync();
+                    fileDto = await FileMapper.ToFileDtoAsync(image!);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
+                var result = await _newsService.EditNewsAsync(id, news, fileDto, removeImg);
+                if (result == null)
+                    return NotFound();
                 return RedirectToAction(nameof(Index));
             }
             return View(news);
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
                 return NotFound();
 
-            var news = await _service.GetAsync(x => x.Id == id);
+            var news = await _newsService.GetNewsByIdAsync(id);
             if (news == null)
                 return NotFound();
 
@@ -126,19 +119,11 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirm(int id)
         {
-            var news = await _service.FindByIdAsync(id);
-            if (news != null)
-            {
-                if (!string.IsNullOrEmpty(news.Image))
-                {
-                    FileHelper.FileRemover(news.Image, "/Img/News/");
-                }
-
-                _service.Delete(news);
-                await _service.SaveChangesAsync();
-            }
+            var success = await _newsService.DeleteNewsAsync(id);
+            if (!success)
+                return NotFound();
 
             return RedirectToAction(nameof(Index));
-        }*/
+        }
     }
 }

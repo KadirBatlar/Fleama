@@ -1,4 +1,4 @@
-﻿@model Fleama.Core.Entities.News
+﻿@model News
 
 @{
     ViewData["Title"] = "Haber Detayı";
@@ -10,9 +10,9 @@
 <div class="card shadow-sm mt-4">
     <div class="row g-0">
         <div class="col-md-4 text-center p-3">
-            @if (!string.IsNullOrEmpty(Model.Image))
+            @if (Model.Image != null && !string.IsNullOrEmpty(Model.Image.Url))
             {
-                <img src="~/Img/News/@Model.Image" class="img-fluid rounded shadow-sm" alt="@Model.Name" style="max-height: 300px;" />
+                <img src="@Model.Image.Url" width="80" height="80" style="object-fit:cover; border-radius: 8px;" />
             }
             else
             {
