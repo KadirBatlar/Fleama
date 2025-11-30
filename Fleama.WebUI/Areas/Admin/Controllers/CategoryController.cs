@@ -29,6 +29,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             return Ok(categories);
         }
 
+        
         public async Task<IActionResult> GetById(int id)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);

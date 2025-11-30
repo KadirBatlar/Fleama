@@ -1,0 +1,48 @@
+@model BlogPostDTO
+@{
+    ViewData["Title"] = "Blog Yazısını Sil";
+}
+
+<div class="my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Blog Yazısını Sil
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Bu blog yazısını silmek istediğinizden emin misiniz?</p>
+                    
+                    <div class="alert alert-warning">
+                        <strong>Uyarı:</strong> Bu işlem geri alınamaz. Blog yazısı ve ilişkili görsel kalıcı olarak silinecektir.
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Başlık:</strong> @Model.Title
+                    </div>
+                    <div class="mb-3">
+                        <strong>Yazar:</strong> @Model.UserFullName
+                    </div>
+                    <div class="mb-3">
+                        <strong>Oluşturulma Tarihi:</strong> @Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                    </div>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash me-1"></i> Evet, Sil
+                            </button>
+                            <a asp-action="Detail" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i> İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

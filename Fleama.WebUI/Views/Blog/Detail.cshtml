@@ -1,0 +1,118 @@
+@model BlogPostDTO
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="my-5">
+    <article class="blog-detail">
+        <div class="mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <h1 class="display-5 fw-bold mb-2">@Model.Title</h1>
+                    <div class="d-flex align-items-center gap-3 text-muted">
+                        <span>
+                            <i class="fas fa-user me-1"></i>
+                            @if (!string.IsNullOrEmpty(Model.UserFullName))
+                            {
+                                @Model.UserFullName
+                            }
+                            else
+                            {
+                                @Model.UserName
+                            }
+                        </span>
+                        <span>
+                            <i class="fas fa-calendar me-1"></i>
+                            @Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                        </span>
+                        @if (Model.UpdatedAt.HasValue)
+                        {
+                            <span class="text-muted small">
+                                <i class="fas fa-edit me-1"></i>
+                                Güncellendi: @Model.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")
+                            </span>
+                        }
+                    </div>
+                </div>
+                @if (Model.IsVerified)
+                {
+                    <span class="badge verified-badge-large">
+                        <i class="fas fa-check-circle me-1"></i> Doğrulanmış
+                    </span>
+                }
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div class="mb-4">
+                <img src="@Model.ImageUrl" alt="@Model.Title" class="img-fluid rounded blog-detail-image" />
+            </div>
+        }
+
+        <div class="blog-content">
+            @Html.Raw(Model.Content)
+        </div>
+
+        @if (ViewBag.CanEdit == true)
+        {
+            <div class="mt-4 pt-4 border-top">
+                <div class="btn-group" role="group">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                        <i class="fas fa-edit me-1"></i> Düzenle
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i> Sil
+                    </a>
+                </div>
+            </div>
+        }
+
+        <div class="mt-5">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Blog Listesine Dön
+            </a>
+        </div>
+    </article>
+</div>
+
+<style>
+    .blog-detail {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .blog-detail-image {
+        width: 100%;
+        max-height: 500px;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .blog-content {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #333;
+    }
+
+    .blog-content p {
+        margin-bottom: 1.5rem;
+    }
+
+    .blog-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 1rem 0;
+    }
+
+    .verified-badge-large {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+</style>
+

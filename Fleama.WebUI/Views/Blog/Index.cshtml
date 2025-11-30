@@ -1,0 +1,126 @@
+@model IEnumerable<BlogPostDTO>
+@{
+    ViewData["Title"] = "Blog";
+}
+
+<div class="my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-center flex-grow-1">Blog</h1>
+        @if (Context.User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Yeni Yazı
+            </a>
+        }
+    </div>
+
+    <div class="row g-4">
+        @foreach (var post in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card blog-card h-100 shadow-sm">
+                    @if (!string.IsNullOrEmpty(post.ImageUrl))
+                    {
+                        <a asp-action="Detail" asp-route-id="@post.Id">
+                            <img src="@post.ImageUrl" class="card-img-top blog-card-image" alt="@post.Title" />
+                        </a>
+                    }
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex align-items-center mb-2">
+                            <h5 class="card-title mb-0 flex-grow-1">
+                                <a asp-action="Detail" asp-route-id="@post.Id" class="text-dark text-decoration-none">
+                                    @post.Title
+                                </a>
+                            </h5>
+                            @if (post.IsVerified)
+                            {
+                                <span class="badge verified-badge">
+                                    <i class="fas fa-check-circle me-1"></i> Doğrulanmış
+                                </span>
+                            }
+                        </div>
+                        <p class="card-text text-muted flex-grow-1">
+                            @{
+                                var preview = post.Content.Length > 150 
+                                    ? post.Content.Substring(0, 150) + "..." 
+                                    : post.Content;
+                            }
+                            @Html.Raw(preview)
+                        </p>
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center text-muted small">
+                                <span>
+                                    <i class="fas fa-user me-1"></i>
+                                    @if (!string.IsNullOrEmpty(post.UserFullName))
+                                    {
+                                        @post.UserFullName
+                                    }
+                                    else
+                                    {
+                                        @post.UserName
+                                    }
+                                </span>
+                                <span>
+                                    <i class="fas fa-calendar me-1"></i>
+                                    @post.CreatedDate.ToString("dd.MM.yyyy")
+                                </span>
+                            </div>
+                            <a asp-action="Detail" asp-route-id="@post.Id" class="btn btn-sm btn-outline-primary mt-2 w-100">
+                                Devamını Oku
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <p class="text-muted">Henüz blog yazısı bulunmamaktadır.</p>
+            @if (Context.User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-action="Create" class="btn btn-primary">İlk Yazıyı Oluştur</a>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .blog-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: none;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .blog-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    }
+
+    .blog-card-image {
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .blog-card:hover .blog-card-image {
+        transform: scale(1.05);
+    }
+
+    .verified-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .card-title a:hover {
+        color: #667eea !important;
+    }
+</style>
+
