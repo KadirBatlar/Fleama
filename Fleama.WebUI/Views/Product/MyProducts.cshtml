@@ -1,0 +1,86 @@
+@model List<Product>
+@{
+    ViewData["Title"] = "Ürünlerim";
+}
+
+<h2 class="mb-4"><i class="fas fa-box me-2"></i> Ürünlerim</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        Henüz ürün eklemediniz.
+        <a asp-action="Create" class="alert-link">İlk ürününüzü eklemek için tıklayın.</a>
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var product in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    @if (product.Images?.FirstOrDefault() != null)
+                    {
+                        <img src="@product.Images.First().Url" class="card-img-top" alt="@product.Name" style="height: 200px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-image fa-3x text-muted"></i>
+                        </div>
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text text-muted">
+                            @if (!string.IsNullOrEmpty(product.Description))
+                            {
+                                @(product.Description.Length > 100 ? product.Description.Substring(0, 100) + "..." : product.Description)
+                            }
+                        </p>
+                        <div class="mb-2">
+                            <strong>Durum: </strong>
+                            @if (product.Status == Fleama.Core.Enums.ProductStatus.Approved)
+                            {
+                                <span class="badge bg-success">Onaylandı</span>
+                            }
+                            else if (product.Status == Fleama.Core.Enums.ProductStatus.Pending)
+                            {
+                                <span class="badge bg-warning">Beklemede</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Reddedildi</span>
+                            }
+                        </div>
+                        @if (product.Price.HasValue)
+                        {
+                            <p class="card-text"><strong>Fiyat: </strong>@product.Price.Value.ToString("C")</p>
+                        }
+                        <p class="card-text"><small class="text-muted">Eklenme: @product.CreatedDate.ToString("dd.MM.yyyy")</small></p>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Detail" asp-route-id="@product.Id" class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye me-1"></i> Detay
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div class="mt-3">
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> Yeni Ürün Ekle
+    </a>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-1"></i> Tüm Ürünlere Dön
+    </a>
+</div>
+

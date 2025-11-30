@@ -1,4 +1,5 @@
 ﻿using Fleama.Core.Entities;
+using Fleama.Core.Enums;
 using Fleama.Service.Abstract;
 using Fleama.Shared.Dtos;
 using Fleama.WebUI.Utils;
@@ -26,6 +27,12 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         {
             var productContext = _productService.GetAllProductsAsync();
             return View(await productContext);
+        }
+
+        public async Task<IActionResult> Pending()
+        {
+            var pendingProducts = await _productService.GetPendingProductsAsync();
+            return View(pendingProducts);
         }
 
         public async Task<IActionResult> GetAll()
@@ -71,9 +78,16 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Categories = new SelectList(_productService.GetAll(), "Id", "Name");
+                var brands = _brandService.GetAll();
+                var categories = _categoryService.GetAll();
+                ViewBag.BrandId = new SelectList(brands, "Id", "Name");
+                ViewBag.CategoryId = new SelectList(categories, "Id", "Name");
                 return View(product);
             }
+
+            // Admin-created products are automatically approved
+            product.Status = ProductStatus.Approved;
+            product.IsActive = true;
 
             var fileDtos = new List<FileDto>();
             if (images != null)
@@ -84,7 +98,38 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
 
             await _productService.CreateProductAsync(product, fileDtos);
 
+            TempData["Message"] = "Ürün başarıyla eklendi.";
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Approve(int id)
+        {
+            var success = await _productService.UpdateProductStatusAsync(id, ProductStatus.Approved);
+            if (success)
+            {
+                TempData["Message"] = "Ürün onaylandı.";
+            }
+            else
+            {
+                TempData["Message"] = "Ürün bulunamadı.";
+            }
+            return RedirectToAction(nameof(Pending));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Reject(int id)
+        {
+            var success = await _productService.UpdateProductStatusAsync(id, ProductStatus.Rejected);
+            if (success)
+            {
+                TempData["Message"] = "Ürün reddedildi.";
+            }
+            else
+            {
+                TempData["Message"] = "Ürün bulunamadı.";
+            }
+            return RedirectToAction(nameof(Pending));
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -130,10 +175,18 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
                     fileDtos.Add(await FileMapper.ToFileDtoAsync(img!));
             }
 
+            // Preserve status if it was set, otherwise keep existing
+            var existingProduct = await _productService.GetProductByIdAsync(id);
+            if (existingProduct != null)
+            {
+                product.Status = existingProduct.Status;
+            }
+
             var result = await _productService.EditProductAsync(id, product, fileDtos, removeImgIds);
             if (result == null)
                 return NotFound();
 
+            TempData["Message"] = "Ürün başarıyla güncellendi.";
             return RedirectToAction(nameof(Index));
         }
 
