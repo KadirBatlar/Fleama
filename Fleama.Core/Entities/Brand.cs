@@ -6,5 +6,8 @@ namespace Fleama.Core.Entities
     {
         [Display(Name = "Marka Adı")]
         public string Name { get; set; }
+
+        [Display(Name = "Ürünler")]
+        public IList<Product>? Products { get; set; }
     }
 }

@@ -8,6 +8,6 @@ namespace Fleama.Core.Entities
         [Display(Name ="Aktif?")]
         public bool IsActive { get; set; }
         [Display(Name ="Kayıt Tarihi")]
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; }
     }
 }

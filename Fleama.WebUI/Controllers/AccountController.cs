@@ -228,5 +228,13 @@ namespace Fleama.WebUI.Controllers
             }
                 return View();
         }
+
+        [Authorize]
+        public async Task<IActionResult> SignOutAsync()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("SignIn", "Account");
+        }
+
     }
 }

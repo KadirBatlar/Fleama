@@ -33,14 +33,7 @@
                 <li class="nav-item">
                     @if (Context.User.Identity.IsAuthenticated)
                     {
-                        @if (Context.User.IsInRole("Admin"))
-                        {
-                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Product" asp-action="Create">Ürün Ekle</a>
-                        }
-                        else
-                        {
-                            <a class="nav-link text-dark" asp-controller="Product" asp-action="Create">Ürün Ekle</a>
-                        }
+                        <a class="nav-link text-dark" asp-controller="Product" asp-action="Create">Ürün Ekle</a>
                     }
                     else
                     {
@@ -57,7 +50,7 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/Account">Kullanıcı Bilgileri</a></li>
                             <li><a class="dropdown-item" href="/Account/">Değerlendirmelerim</a></li>
-                            <li><a class="dropdown-item" href="/Account/">Oturumu Kapat</a></li>
+                            <li><a class="dropdown-item" href="/Account/SignOut">Oturumu Kapat</a></li>
                         </ul>
                     </li>
                 }

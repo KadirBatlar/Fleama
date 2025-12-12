@@ -25,5 +25,18 @@ namespace Fleama.Data
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             base.OnModelCreating(modelBuilder);
         }
+
+        public override int SaveChanges()
+        {
+            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CreatedDate = DateTime.UtcNow;
+                }
+            }
+            return base.SaveChanges();
+        }
+
     }
 }
