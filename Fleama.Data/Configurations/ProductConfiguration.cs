@@ -18,6 +18,14 @@ namespace Fleama.Data.Configurations
 
             builder.Property(x => x.ProductCode)
                    .HasMaxLength(50);
+
+            builder.Property(x => x.Price)
+                   .HasPrecision(18, 2);
+
+            builder.HasOne(p => p.User)
+                   .WithMany()
+                   .HasForeignKey(p => p.UserId)
+                   .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

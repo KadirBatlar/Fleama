@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Fleama.Core.Enums;
 
 namespace Fleama.Core.Entities
 {
@@ -17,22 +18,34 @@ namespace Fleama.Core.Entities
         [Display(Name = "Ürün Kodu")]
         public string? ProductCode { get; set; }
 
+        [Display(Name = "Fiyat")]
+        public decimal? Price { get; set; }
+
+        [Display(Name = "Durum")]
+        public ProductStatus Status { get; set; } = ProductStatus.Pending;
+
         [Display(Name = "Anasayfada Gösterilsin mi?")]
         public bool IsHome { get; set; }
 
         [Display(Name = "Kategori ID")]
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
 
         [Display(Name = "Kategori")]
         public Category? Category { get; set; }
 
         [Display(Name = "Marka ID")]
-        public int BrandId { get; set; }
+        public int? BrandId { get; set; }
 
         [Display(Name = "Marka")]
         public Brand? Brand { get; set; }
 
         [Display(Name = "Sıra Numarası")]
         public int OrderNo { get; set; }
+
+        [Display(Name = "Kullanıcı ID")]
+        public int? UserId { get; set; }
+
+        [Display(Name = "Kullanıcı")]
+        public AppUser? User { get; set; }
     }
 }

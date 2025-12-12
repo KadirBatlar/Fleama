@@ -19,6 +19,11 @@ namespace Fleama.Service.Concrete
         public async Task<Product> CreateProductAsync(Product product, List<FileDto> imageFiles)
         {
             product.IsActive = true;
+            // Status should be set by the controller (Approved for admin, Pending for users)
+            // If not set, default to Approved
+            if (product.Status == 0)
+                product.Status = ProductStatus.Approved;
+            
             _context.Products.Add(product);
             await _context.SaveChangesAsync(); // product.Id oluşur
 
@@ -77,10 +82,12 @@ namespace Fleama.Service.Concrete
             existingProduct.Name = updatedProduct.Name;
             existingProduct.Description = updatedProduct.Description;
             existingProduct.ProductCode = updatedProduct.ProductCode;
+            existingProduct.Price = updatedProduct.Price;
             existingProduct.IsHome = updatedProduct.IsHome;
             existingProduct.CategoryId = updatedProduct.CategoryId;
             existingProduct.BrandId = updatedProduct.BrandId;
             existingProduct.OrderNo = updatedProduct.OrderNo;
+            existingProduct.Status = updatedProduct.Status;
 
             _context.Products.Update(existingProduct);
             await _context.SaveChangesAsync();
@@ -140,6 +147,40 @@ namespace Fleama.Service.Concrete
                                  .Where(filter)
                                  .Include(p => p.Images)
                                  .ToListAsync();
+        }
+
+        public async Task<List<Product>> GetProductsByUserIdAsync(int userId)
+        {
+            return await _context.Products
+                .Where(p => p.UserId == userId)
+                .Include(p => p.Images)
+                .Include(p => p.Category)
+                .Include(p => p.Brand)
+                .ToListAsync();
+        }
+
+        public async Task<List<Product>> GetPendingProductsAsync()
+        {
+            return await _context.Products
+                .Where(p => p.Status == ProductStatus.Pending)
+                .Include(p => p.Images)
+                .Include(p => p.Category)
+                .Include(p => p.Brand)
+                .Include(p => p.User)
+                .ToListAsync();
+        }
+
+        public async Task<bool> UpdateProductStatusAsync(int productId, ProductStatus status)
+        {
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null)
+                return false;
+
+            product.Status = status;
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
     }

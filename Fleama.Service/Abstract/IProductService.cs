@@ -1,4 +1,5 @@
 ﻿using Fleama.Core.Entities;
+using Fleama.Core.Enums;
 using Fleama.Shared.Dtos;
 
 namespace Fleama.Service.Abstract
@@ -10,6 +11,9 @@ namespace Fleama.Service.Abstract
         Task<bool> DeleteProductAsync(int id);
         Task<IEnumerable<Product>> GetAllProductsAsync();
         Task<Product> GetProductByIdAsync(int id);
+        Task<List<Product>> GetProductsByUserIdAsync(int userId);
+        Task<List<Product>> GetPendingProductsAsync();
+        Task<bool> UpdateProductStatusAsync(int productId, ProductStatus status);
 
     }
 }
