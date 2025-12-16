@@ -28,7 +28,7 @@ namespace Fleama.WebUI.Controllers
         {
             // Show only approved and active products to all users
             var productContext = _productService.GetAllAsync(p => p.IsActive && 
-                                     p.Status == ProductStatus.Approved &&
+                                     p.ApproveStatus == ProductApproveStatus.Approved &&
                                      (string.IsNullOrEmpty(search) || 
                                       p.Name.Contains(search) || 
                                       (p.Description != null && p.Description.Contains(search))));
@@ -47,7 +47,7 @@ namespace Fleama.WebUI.Controllers
 
             var relatedProducts = _productService.GetQueryable()
                 .Where(p => p.IsActive && 
-                            p.Status == ProductStatus.Approved && 
+                            p.ApproveStatus == ProductApproveStatus.Approved && 
                             p.Id != product.Id);
             
             // If product has a category, filter by it
@@ -102,11 +102,9 @@ namespace Fleama.WebUI.Controllers
             }
 
             // Set status to Pending for user-submitted products
-            product.Status = ProductStatus.Pending;
+            product.ApproveStatus = ProductApproveStatus.Pending;
             product.IsActive = true;
             // Users cannot set these fields - they will be set by admin during approval
-            product.IsHome = false;
-            product.OrderNo = 0;
             product.CategoryId = null; // Admin will set this during approval
             product.BrandId = null; // Admin will set this during approval
 

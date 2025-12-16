@@ -13,7 +13,7 @@ namespace Fleama.Service.Abstract
         Task<Product> GetProductByIdAsync(int id);
         Task<List<Product>> GetProductsByUserIdAsync(int userId);
         Task<List<Product>> GetPendingProductsAsync();
-        Task<bool> UpdateProductStatusAsync(int productId, ProductStatus status);
+        Task<bool> UpdateProductStatusAsync(int productId, ProductApproveStatus status);
 
     }
 }

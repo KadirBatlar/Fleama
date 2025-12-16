@@ -3,6 +3,7 @@ using Fleama.Service.Abstract;
 using Fleama.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Fleama.Core.Enums;
 
 namespace Fleama.WebUI.Controllers
 {
@@ -22,7 +23,7 @@ namespace Fleama.WebUI.Controllers
         {
             var model = new HomePageViewModel()
             {
-                Products = await _productService.GetAllAsync(p => p.IsActive && p.IsHome), 
+                Products = await _productService.GetAllAsync(p => p.IsActive && p.ApproveStatus == ProductApproveStatus.Approved), 
                 News = await _newsService.GetAllAsync(n => n.IsActive)
             };
             return View(model);

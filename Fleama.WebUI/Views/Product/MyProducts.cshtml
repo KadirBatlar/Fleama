@@ -45,11 +45,11 @@ else
                         </p>
                         <div class="mb-2">
                             <strong>Durum: </strong>
-                            @if (product.Status == Fleama.Core.Enums.ProductStatus.Approved)
+                            @if (product.ApproveStatus == Fleama.Core.Enums.ProductApproveStatus.Approved)
                             {
                                 <span class="badge bg-success">Onaylandı</span>
                             }
-                            else if (product.Status == Fleama.Core.Enums.ProductStatus.Pending)
+                            else if (product.ApproveStatus == Fleama.Core.Enums.ProductApproveStatus.Pending)
                             {
                                 <span class="badge bg-warning">Beklemede</span>
                             }

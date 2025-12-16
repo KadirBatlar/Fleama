@@ -114,7 +114,7 @@ namespace Fleama.WebUI.Controllers
                         return Redirect(string.IsNullOrEmpty(loginViewModel.ReturnUrl) ? "/" : loginViewModel.ReturnUrl);
                     }
                 }
-                catch (Exception error)
+                catch
                 {
                     //log
                     ModelState.AddModelError("", "Hata Oluştu!");

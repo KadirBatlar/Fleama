@@ -12,6 +12,7 @@ namespace Fleama.Core.Entities
         public string? Description { get; set; }
 
         public IList<int>? ImageId { get; set; }
+
         [Display(Name = "Görseller")]
         public IList<Image>? Images { get; set; }
 
@@ -22,10 +23,18 @@ namespace Fleama.Core.Entities
         public decimal? Price { get; set; }
 
         [Display(Name = "Durum")]
-        public ProductStatus Status { get; set; } = ProductStatus.Pending;
+        public ProductApproveStatus ApproveStatus { get; set; } = ProductApproveStatus.Pending;
 
-        [Display(Name = "Anasayfada Gösterilsin mi?")]
-        public bool IsHome { get; set; }
+
+        [Display(Name = "Skor")]
+        public int Score { get; set; } = 0;
+
+        public int ViewCount { get; set; } = 0;
+        public int FavoriteCount { get; set; } = 0;
+        public int SwapRequestCount { get; set; } = 0;
+
+
+        // 🔗 Relations
 
         [Display(Name = "Kategori ID")]
         public int? CategoryId { get; set; }
@@ -33,14 +42,13 @@ namespace Fleama.Core.Entities
         [Display(Name = "Kategori")]
         public Category? Category { get; set; }
 
+
         [Display(Name = "Marka ID")]
         public int? BrandId { get; set; }
 
         [Display(Name = "Marka")]
         public Brand? Brand { get; set; }
 
-        [Display(Name = "Sıra Numarası")]
-        public int OrderNo { get; set; }
 
         [Display(Name = "Kullanıcı ID")]
         public int? UserId { get; set; }

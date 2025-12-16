@@ -86,7 +86,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             }
 
             // Admin-created products are automatically approved
-            product.Status = ProductStatus.Approved;
+            product.ApproveStatus = ProductApproveStatus.Approved;
             product.IsActive = true;
 
             var fileDtos = new List<FileDto>();
@@ -105,7 +105,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Approve(int id)
         {
-            var success = await _productService.UpdateProductStatusAsync(id, ProductStatus.Approved);
+            var success = await _productService.UpdateProductStatusAsync(id, ProductApproveStatus.Approved);
             if (success)
             {
                 TempData["Message"] = "Ürün onaylandı.";
@@ -120,7 +120,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Reject(int id)
         {
-            var success = await _productService.UpdateProductStatusAsync(id, ProductStatus.Rejected);
+            var success = await _productService.UpdateProductStatusAsync(id, ProductApproveStatus.Rejected);
             if (success)
             {
                 TempData["Message"] = "Ürün reddedildi.";
@@ -179,7 +179,7 @@ namespace Fleama.WebUI.Areas.Admin.Controllers
             var existingProduct = await _productService.GetProductByIdAsync(id);
             if (existingProduct != null)
             {
-                product.Status = existingProduct.Status;
+                product.ApproveStatus = existingProduct.ApproveStatus;
             }
 
             var result = await _productService.EditProductAsync(id, product, fileDtos, removeImgIds);

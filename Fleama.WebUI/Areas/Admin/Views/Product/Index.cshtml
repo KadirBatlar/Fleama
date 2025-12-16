@@ -17,8 +17,6 @@
             <th>Görsel</th>
             <th>Kategori</th>
             <th>Marka</th>
-            <th>Anasayfa?</th>
-            <th>Sıra No</th>
             <th>İşlemler</th>
         </tr>
     </thead>
@@ -41,17 +39,6 @@
                     </td>
                     <td>@item.Category?.Name</td>
                     <td>@item.Brand?.Name</td>
-                    <td>
-                        @if (item.IsHome)
-                        {
-                            <span class="badge bg-success">Evet</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary">Hayır</span>
-                        }
-                    </td>
-                    <td>@item.OrderNo</td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-1">
                             <i class="fas fa-edit"></i>
