@@ -55,6 +55,7 @@ services.AddScoped<ICategoryService, CategoryService>();
 services.AddScoped<IProductService, ProductService>();
 services.AddScoped<INewsService, NewsService>();
 services.AddScoped<IBlogService, BlogService>();
+services.AddScoped<IUserFavoriteService, UserFavoriteService>();
 
 // Register FluentValidation validators
 services.AddValidatorsFromAssemblyContaining<AppUserValidator>();

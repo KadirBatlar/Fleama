@@ -23,6 +23,9 @@ namespace Fleama.Core.Entities
 
         [Display(Name = "Admin?")]
         public bool IsAdmin { get; set; }
-        public Guid? UserGuid { get; set; } = Guid.NewGuid();          
+        public Guid? UserGuid { get; set; } = Guid.NewGuid();
+
+        // Navigation properties
+        public ICollection<UserFavoriteProduct>? FavoriteProducts { get; set; }
     }
 }

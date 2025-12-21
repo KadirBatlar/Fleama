@@ -5,6 +5,42 @@
 }
 
 <!-- Product section -->
+<!--  <section>
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6">
+                @if (Model.Product.Images != null && Model.Product.Images.Any())
+                {
+                    <div id="productCarousel" class="carousel slide mb-5 mb-md-0" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            @for (int i = 0; i < Model.Product.Images.Count; i++)
+                            {
+                                var image = Model.Product.Images[i];
+                                <div class="carousel-item @(i == 0 ? "active" : "")">
+                                    <img class="d-block w-100" src="@image.Url" alt="@Model.Product.Name" style="object-fit:cover; height:400px;" />
+                                </div>
+                            }
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <span class="text-muted">Görsel yok</span>
+                }
+            </div>
+
+            <div class="col-md-6">
+-->
+
+<!-- Product section -->
 <section>
     <div class="container px-4 px-lg-5 my-5">
         <div class="row gx-4 gx-lg-5 align-items-center">
@@ -44,11 +80,27 @@
                     @* Fiyat alanı istenirse buraya eklenebilir *@
                 </div>
                 <p class="lead">@Model.Product.Description</p>
-                <div class="d-flex">
+                <div class="d-flex gap-2">
                     <button class="btn btn-outline-dark flex-shrink-0" type="button">
                         <i class="bi-cart-fill me-1"></i>
                         Takas Yap
                     </button>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <button class="btn btn-outline-danger flex-shrink-0 favorite-toggle-btn-detail" 
+                                data-product-id="@Model.Product.Id" 
+                                type="button">
+                            <i class="bi bi-heart favorite-icon-detail me-1"></i>
+                            <span class="favorite-text-detail">Favorilere Ekle</span>
+                        </button>
+                    }
+                    else
+                    {
+                        <a href="/Account/SignIn?returnUrl=@Context.Request.Path" class="btn btn-outline-secondary flex-shrink-0">
+                            <i class="bi bi-heart me-1"></i>
+                            Favorilere Ekle
+                        </a>
+                    }
                 </div>
             </div>
         </div>
@@ -67,3 +119,57 @@
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            const productId = @Model.Product.Id;
+            const btn = $('.favorite-toggle-btn-detail');
+            const icon = $('.favorite-icon-detail');
+            const text = $('.favorite-text-detail');
+            
+            // Load initial favorite status
+            $.ajax({
+                url: '/Favorites/IsFavorite',
+                type: 'GET',
+                data: { productId: productId },
+                success: function(response) {
+                    if (response.isFavorited) {
+                        icon.removeClass('bi-heart').addClass('bi-heart-fill');
+                        text.text('Favorilerden Çıkar');
+                        btn.removeClass('btn-outline-danger').addClass('btn-danger');
+                    }
+                }
+            });
+            
+            // Handle toggle
+            btn.on('click', function() {
+                $.ajax({
+                    url: '/Favorites/Toggle',
+                    type: 'POST',
+                    data: { productId: productId },
+                    success: function(response) {
+                        if (response.success) {
+                            if (response.isFavorited) {
+                                // Added to favorites
+                                icon.removeClass('bi-heart').addClass('bi-heart-fill');
+                                text.text('Favorilerden Çıkar');
+                                btn.removeClass('btn-outline-danger').addClass('btn-danger');
+                            } else {
+                                // Removed from favorites
+                                icon.removeClass('bi-heart-fill').addClass('bi-heart');
+                                text.text('Favorilere Ekle');
+                                btn.removeClass('btn-danger').addClass('btn-outline-danger');
+                            }
+                        } else {
+                            alert(response.message || 'Bir hata oluştu');
+                        }
+                    },
+                    error: function() {
+                        alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                    }
+                });
+            });
+        });
+    </script>
+}

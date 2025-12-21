@@ -3,61 +3,123 @@
     ViewData["Title"] = "Favorilerim";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Favoriler</h1>
-</div>
+<div class="container my-5">
+    <div class="text-center mb-4">
+        <h1 class="display-4">Favoriler</h1>
+        <p class="text-muted">Favori ürünlerinizi buradan yönetebilirsiniz</p>
+    </div>
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Ürün</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.Any())
-                    {
-                        foreach (var item in Model)
-                        {
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
                             <tr>
-                                <td>
-                                    @if (item.Images != null && item.Images.Any() && !string.IsNullOrEmpty(item.Images.First().Url))
-                                    {
-                                        <img src="~/@item.Images.First().Url" alt="@item.Name" height="37" style="object-fit:cover;" />
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">Görsel yok</span>
-                                    }
-                                </td>
-                                <td>
-                                    <a href="/Products/Details/@item.Id">
-                                        @item.Name
-                                    </a>
-                                </td>
-                                <td>
-                                    <form asp-action="Remove" asp-controller="Favorites">
-                                        <input type="hidden" name="productId" value="@item.Id" />
-                                        <button class="btn btn-sm btn-danger" type="submit" style="box-shadow:none">
-                                            <i class="bi bi-x-lg"></i>
-                                        </button>
-                                    </form>
-                                </td>
+                                <th style="width: 100px;">Görsel</th>
+                                <th>Ürün Adı</th>
+                                <th style="width: 150px;">Kategori</th>
+                                <th style="width: 100px;" class="text-center">İşlem</th>
                             </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="3" class="text-center text-muted">Favori ürün yok</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr id="favorite-row-@item.Id">
+                                    <td>
+                                        @if (item.Images != null && item.Images.Any() && !string.IsNullOrEmpty(item.Images.First().Url))
+                                        {
+                                            <img src="~/@item.Images.First().Url" alt="@item.Name" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;" />
+                                        }
+                                        else
+                                        {
+                                            <div class="text-muted text-center" style="width: 80px; height: 80px; line-height: 80px; border: 1px solid #dee2e6; border-radius: 0.25rem;">
+                                                <i class="bi bi-image"></i>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a href="/Product/Detail/@item.Id" class="text-decoration-none fw-semibold">
+                                            @item.Name
+                                        </a>
+                                        @if (!string.IsNullOrEmpty(item.Description))
+                                        {
+                                            <p class="text-muted small mb-0">
+                                                @(item.Description.Length > 100 ? item.Description.Substring(0, 100) + "..." : item.Description)
+                                            </p>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.Category != null)
+                                        {
+                                            <span class="badge bg-secondary">@item.Category.Name</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-danger btn-sm favorite-toggle-btn" 
+                                                data-product-id="@item.Id" 
+                                                title="Favorilerden Çıkar">
+                                            <i class="bi bi-heart-fill"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-heart display-1 text-muted"></i>
+                    <h3 class="mt-3 text-muted">Henüz favori ürün eklemediniz</h3>
+                    <p class="text-muted">Beğendiğiniz ürünleri favorilere ekleyerek daha sonra kolayca erişebilirsiniz.</p>
+                    <a href="/Product/Index" class="btn btn-primary mt-3">
+                        <i class="bi bi-search me-2"></i>Ürünleri Keşfet
+                    </a>
+                </div>
+            }
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Handle favorite toggle in favorites page
+            $('.favorite-toggle-btn').on('click', function() {
+                const btn = $(this);
+                const productId = btn.data('product-id');
+                
+                $.ajax({
+                    url: '/Favorites/Toggle',
+                    type: 'POST',
+                    data: { productId: productId },
+                    success: function(response) {
+                        if (response.success) {
+                            // Remove the row from the table with animation
+                            $('#favorite-row-' + productId).fadeOut(300, function() {
+                                $(this).remove();
+                                
+                                // Check if table is now empty
+                                if ($('tbody tr').length === 0) {
+                                    location.reload(); // Reload to show empty state
+                                }
+                            });
+                        } else {
+                            alert(response.message || 'Bir hata oluştu');
+                        }
+                    },
+                    error: function() {
+                        alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                    }
+                });
+            });
+        });
+    </script>
+}

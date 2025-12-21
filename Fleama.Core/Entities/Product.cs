@@ -55,5 +55,8 @@ namespace Fleama.Core.Entities
 
         [Display(Name = "Kullanıcı")]
         public AppUser? User { get; set; }
+
+        // Favorite relationship
+        public ICollection<UserFavoriteProduct>? FavoritedByUsers { get; set; }
     }
 }

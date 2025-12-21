@@ -2,14 +2,25 @@
 
 <div class="col mb-5">
     <div class="card h-100 position-relative">
-        <!-- Sale badge-->
-        <div class="badge position-absolute" style="top: 0.5rem; right: 0.5rem">
-            <form asp-action="Add" asp-controller="Favorites">
-                <input type="hidden" name="productId" value="@Model.Id" />
-                <button class="btn btn-transparent" type="submit" style="box-shadow:none">
-                    <i class="bi bi-heart"></i>
+        <!-- Favorite button badge-->
+        <div class="badge position-absolute" style="top: 0.5rem; right: 0.5rem; z-index: 10;">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <button class="btn btn-transparent favorite-toggle-btn p-0" 
+                        data-product-id="@Model.Id" 
+                        style="box-shadow:none; background: rgba(255,255,255,0.9); border-radius: 50%; width: 40px; height: 40px;"
+                        title="Favorilere Ekle/Çıkar">
+                    <i class="bi bi-heart favorite-icon" style="font-size: 1.2rem; color: #dc3545;"></i>
                 </button>
-            </form>
+            }
+            else
+            {
+                <a href="/Account/SignIn" class="btn btn-transparent p-0" 
+                   style="box-shadow:none; background: rgba(255,255,255,0.9); border-radius: 50%; width: 40px; height: 40px;"
+                   title="Favorilere eklemek için giriş yapın">
+                    <i class="bi bi-heart" style="font-size: 1.2rem; color: #6c757d;"></i>
+                </a>
+            }
         </div>
 
         <!-- Product images carousel -->
@@ -38,7 +49,9 @@
             }
             else
             {
-                <span class="text-muted">Görsel yok</span>
+                <div class="text-center text-muted p-5" style="height: 250px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                    <i class="bi bi-image" style="font-size: 3rem;"></i>
+                </div>
             }
         </a>
 
@@ -58,3 +71,60 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // This script will be included once per page, not once per product card
+        // So we use event delegation on document
+        if (!window.favoriteHandlerAttached) {
+            window.favoriteHandlerAttached = true;
+            
+            $(document).on('click', '.favorite-toggle-btn', function(e) {
+                e.preventDefault();
+                const btn = $(this);
+                const productId = btn.data('product-id');
+                const icon = btn.find('.favorite-icon');
+                
+                $.ajax({
+                    url: '/Favorites/Toggle',
+                    type: 'POST',
+                    data: { productId: productId },
+                    success: function(response) {
+                        if (response.success) {
+                            if (response.isFavorited) {
+                                // Added to favorites
+                                icon.removeClass('bi-heart').addClass('bi-heart-fill');
+                            } else {
+                                // Removed from favorites
+                                icon.removeClass('bi-heart-fill').addClass('bi-heart');
+                            }
+                        } else {
+                            alert(response.message || 'Bir hata oluştu');
+                        }
+                    },
+                    error: function() {
+                        alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                    }
+                });
+            });
+            
+            // Load initial favorite status for all products on page
+            $('.favorite-toggle-btn').each(function() {
+                const btn = $(this);
+                const productId = btn.data('product-id');
+                const icon = btn.find('.favorite-icon');
+                
+                $.ajax({
+                    url: '/Favorites/IsFavorite',
+                    type: 'GET',
+                    data: { productId: productId },
+                    success: function(response) {
+                        if (response.isFavorited) {
+                            icon.removeClass('bi-heart').addClass('bi-heart-fill');
+                        }
+                    }
+                });
+            });
+        }
+    </script>
+}
