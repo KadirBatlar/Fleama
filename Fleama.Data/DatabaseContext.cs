@@ -19,6 +19,7 @@ namespace Fleama.Data
         public DbSet<Image> Images { get; set; }
         public DbSet<BlogPost> BlogPosts { get; set; }
         public DbSet<UserFavoriteProduct> UserFavoriteProducts { get; set; }
+        public DbSet<ProductInteraction> ProductInteractions { get; set; } = null!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

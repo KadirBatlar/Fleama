@@ -7,6 +7,7 @@ using Fleama.WebUI.Models;
 using Fleama.WebUI.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProductState = Fleama.Core.Enums.ProductState;
 namespace Fleama.WebUI.Controllers
 {
     [Authorize]
@@ -27,10 +28,11 @@ namespace Fleama.WebUI.Controllers
         public async Task<IActionResult> Index(string search = "")
         {
             // Show only approved and active products to all users
-            var productContext = _productService.GetAllAsync(p => p.IsActive && 
+            // Excludes Completed and Archived products (handled in service)
+            var productContext = _productService.GetAllAsync(p => p.IsActive &&
                                      p.ApproveStatus == ProductApproveStatus.Approved &&
-                                     (string.IsNullOrEmpty(search) || 
-                                      p.Name.Contains(search) || 
+                                     (string.IsNullOrEmpty(search) ||
+                                      p.Name.Contains(search) ||
                                       (p.Description != null && p.Description.Contains(search))));
 
             return View(await productContext);
@@ -46,18 +48,20 @@ namespace Fleama.WebUI.Controllers
                 return NotFound();
 
             var relatedProducts = _productService.GetQueryable()
-                .Where(p => p.IsActive && 
-                            p.ApproveStatus == ProductApproveStatus.Approved && 
+                .Where(p => p.IsActive &&
+                            p.ApproveStatus == ProductApproveStatus.Approved &&
+                            p.State != ProductState.Completed &&
+                            p.State != ProductState.Archived &&
                             p.Id != product.Id);
-            
+
             // If product has a category, filter by it
             if (product.CategoryId.HasValue)
             {
                 relatedProducts = relatedProducts.Where(p => p.CategoryId == product.CategoryId);
             }
-            
-            var model = new ProductDetailViewModel() 
-            { 
+
+            var model = new ProductDetailViewModel()
+            {
                 Product = product,
                 RelatedProducts = relatedProducts
             };
@@ -131,6 +135,62 @@ namespace Fleama.WebUI.Controllers
 
             var myProducts = await _productService.GetProductsByUserIdAsync(userId);
             return View(myProducts);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Archive(int id)
+        {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var result = await _productService.ArchiveProductAsync(id, userId);
+            if (result)
+            {
+                TempData["Message"] = "Ürün başarıyla arşivlendi.";
+            }
+            else
+            {
+                TempData["Error"] = "Ürün arşivlenemedi.";
+            }
+
+            return RedirectToAction(nameof(MyProducts));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Unarchive(int id)
+        {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var result = await _productService.UnarchiveProductAsync(id, userId);
+            if (result)
+            {
+                TempData["Message"] = "Ürün arşivden çıkarıldı.";
+            }
+            else
+            {
+                TempData["Error"] = "Ürün arşivden çıkarılamadı.";
+            }
+
+            return RedirectToAction(nameof(ArchivedProducts));
+        }
+
+        public async Task<IActionResult> ArchivedProducts()
+        {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var archivedProducts = await _productService.GetArchivedProductsByUserIdAsync(userId);
+            return View(archivedProducts);
         }
     }
 }

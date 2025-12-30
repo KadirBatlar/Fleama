@@ -23,7 +23,7 @@ namespace Fleama.Service.Concrete
             // If not set, default to Approved
             if (product.ApproveStatus == 0)
                 product.ApproveStatus = ProductApproveStatus.Approved;
-            
+
             _context.Products.Add(product);
             await _context.SaveChangesAsync(); // product.Id oluşur
 
@@ -124,6 +124,7 @@ namespace Fleama.Service.Concrete
         public async Task<IEnumerable<Product>> GetAllProductsAsync()
         {
             return await _context.Products
+                .Where(p => p.State != ProductState.Completed && p.State != ProductState.Archived)
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
                 .Include(p => p.Images)
@@ -143,6 +144,7 @@ namespace Fleama.Service.Concrete
         {
             return await _context.Products
                                  .Where(filter)
+                                 .Where(p => p.State != ProductState.Completed && p.State != ProductState.Archived)
                                  .Include(p => p.Images)
                                  .ToListAsync();
         }
@@ -179,6 +181,54 @@ namespace Fleama.Service.Concrete
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<bool> ArchiveProductAsync(int productId, int userId)
+        {
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null)
+                return false;
+
+            // Only the product owner can archive
+            if (product.UserId != userId)
+                return false;
+
+            product.State = ProductState.Archived;
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> UnarchiveProductAsync(int productId, int userId)
+        {
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null)
+                return false;
+
+            // Only the product owner can unarchive
+            if (product.UserId != userId)
+                return false;
+
+            // Only archived products can be unarchived
+            if (product.State != ProductState.Archived)
+                return false;
+
+            product.State = ProductState.Available;
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<List<Product>> GetArchivedProductsByUserIdAsync(int userId)
+        {
+            return await _context.Products
+                .Where(p => p.UserId == userId && p.State == ProductState.Archived)
+                .Include(p => p.Images)
+                .Include(p => p.Category)
+                .Include(p => p.Brand)
+                .ToListAsync();
         }
 
     }

@@ -14,6 +14,9 @@ namespace Fleama.Service.Abstract
         Task<List<Product>> GetProductsByUserIdAsync(int userId);
         Task<List<Product>> GetPendingProductsAsync();
         Task<bool> UpdateProductStatusAsync(int productId, ProductApproveStatus status);
+        Task<bool> ArchiveProductAsync(int productId, int userId);
+        Task<bool> UnarchiveProductAsync(int productId, int userId);
+        Task<List<Product>> GetArchivedProductsByUserIdAsync(int userId);
 
     }
 }

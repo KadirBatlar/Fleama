@@ -33,6 +33,9 @@ namespace Fleama.Core.Entities
         public int FavoriteCount { get; set; } = 0;
         public int SwapRequestCount { get; set; } = 0;
 
+        [Display(Name = "Ürün Durumu")]
+        public ProductState State { get; set; } = ProductState.Available;
+
 
         // 🔗 Relations
 
