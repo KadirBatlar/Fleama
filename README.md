@@ -1,4 +1,4 @@
-# 🚀 Fleama
+# ε(´｡•᎑•`)っ 💕 Fleama
 
 **Fleama** is a full-stack application designed to serve as a marketplace platform where users can list, browse, and exchange items or services efficiently.  
 The project is structured with clean architecture principles and modular layers to ensure maintainability, scalability, and clear separation of concerns.
